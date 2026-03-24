@@ -4,9 +4,16 @@ import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Embeddable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@NoArgsConstructor
+@Data
+@EqualsAndHashCode
 public class PersonalData {
     
     private static final String REGEX_PATTERN  = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
@@ -23,7 +30,8 @@ public class PersonalData {
     @Column(length = 100, nullable = false)
     private String email;
 
-    private LocalDate birthday;
+    @Embedded
+    private Birthday birthday;
 
     @Column(name = "profile_img_url", length = 255)
     private String profileImgUrl;
@@ -35,7 +43,7 @@ public class PersonalData {
         this.surname = surname;
         this.username = username;
         this.email = (patternMatches(email, REGEX_PATTERN)) ? email : null;
-        this.birthday = birthday;
+        this.birthday = new Birthday(birthday);
         this.profileImgUrl = profileImgUrl;
     }
 

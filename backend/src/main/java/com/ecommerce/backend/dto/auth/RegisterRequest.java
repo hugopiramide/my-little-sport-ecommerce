@@ -1,4 +1,4 @@
-package com.ecommerce.backend.dto.request;
+package com.ecommerce.backend.dto.auth;
 
 import java.time.LocalDate;
 
@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
-public record UserRequestDTO(
+public record RegisterRequest(
 
     @NotBlank(message = "Name is required")
     @Size(max = 100, message = "Name must be at most 100 characters")
