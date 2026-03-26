@@ -39,8 +39,8 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
 
         // Check if email already exists
-        if (userRepository.findByPersonalDataEmail(request.email()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+        if (userRepository.findByPersonalDataUsername(request.username()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
         }
         
         // 1. Build User entity with encoded password and default role
@@ -72,11 +72,11 @@ public class AuthService {
         // 1. Delegate authentication to Spring Security Manager
         // This will throw AuthenticationException if password/user is wrong
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.email(), request.password())
+            new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
         
         // 2. Fetch User to generate token (Authenticated at this point)
-        User user = userRepository.findByPersonalDataEmail(request.email())
+        User user = userRepository.findByPersonalDataUsername(request.username())
             .orElseThrow(() -> new RuntimeException("User not found despite authentication"));
             
         // 3. Generate Token

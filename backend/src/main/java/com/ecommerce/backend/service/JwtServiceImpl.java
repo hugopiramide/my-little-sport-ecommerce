@@ -31,7 +31,7 @@ public class JwtServiceImpl implements JwtService {
     
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(userDetails.getUsername()) //TODO : We need to add more things in payload
                 .claim("authorities", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())

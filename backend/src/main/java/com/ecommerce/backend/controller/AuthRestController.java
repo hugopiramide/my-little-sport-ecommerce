@@ -16,11 +16,11 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
-public class UserRestController {
+public class AuthRestController {
 
     private final AuthService authService;
 
-    public UserRestController(AuthService authService) {
+    public AuthRestController(AuthService authService) {
         this.authService = authService;
     }
 
