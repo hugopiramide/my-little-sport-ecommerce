@@ -1,9 +1,8 @@
 package com.ecommerce.backend.service;
 
-import java.time.LocalDate;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,16 +33,14 @@ public class AuthService {
      * Input: request - DTO containing raw username and password.
      * Output: AuthResponse - The generated JWT token for immediate access.
      */
-    // @Transactional: Ensures the save operation is atomic.
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
-        // Check if email already exists
         if (userRepository.findByPersonalDataUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
         
-        // 1. Build User entity with encoded password and default role
         User user = new User(
             new PersonalData(
                 request.name(),
@@ -69,17 +66,13 @@ public class AuthService {
      * Output: AuthResponse - The generated JWT token if credentials are valid.
      */
     public AuthResponse login(LoginRequest request) {
-        // 1. Delegate authentication to Spring Security Manager
-        // This will throw AuthenticationException if password/user is wrong
-        authenticationManager.authenticate(
+
+        Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
         
-        // 2. Fetch User to generate token (Authenticated at this point)
-        User user = userRepository.findByPersonalDataUsername(request.username())
-            .orElseThrow(() -> new RuntimeException("User not found despite authentication"));
+        User user = (User) authentication.getPrincipal();
             
-        // 3. Generate Token
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
     }

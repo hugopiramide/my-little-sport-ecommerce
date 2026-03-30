@@ -20,18 +20,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtServiceImpl implements JwtService {
     
-    private final SecurityProperties securityProperties;
-    
-    public JwtServiceImpl(SecurityProperties securityProperties){
-        this.securityProperties = securityProperties;
-    }
+    private final String SECRET_KEY;
 
-    // @Value("${app.security.secret-key}")
-    // private final String SECRET_KEY;
+    public JwtServiceImpl(SecurityProperties securityProperties) {
+        this.SECRET_KEY = securityProperties.getJwtSecret();
+    }
     
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .setSubject(userDetails.getUsername()) //TODO : We need to add more things in payload
+                .setSubject(userDetails.getUsername())
                 .claim("authorities", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
@@ -72,7 +69,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(securityProperties.getJwtSecret());
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
