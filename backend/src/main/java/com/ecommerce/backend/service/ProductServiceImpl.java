@@ -48,7 +48,6 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDTO createFromDto(ProductRequestDTO productRequestDTO) {
         Product entity = new Product();
         productMapper.updateEntityFromRequestDto(productRequestDTO, entity);
-        entity.setActive(true);
         Product savedProduct = productRepository.save(entity);
         return productMapper.toProductResponseDTO(savedProduct);
     }

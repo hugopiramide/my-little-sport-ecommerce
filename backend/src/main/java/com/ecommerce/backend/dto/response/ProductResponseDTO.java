@@ -12,7 +12,7 @@ public record ProductResponseDTO(
 
     String imageUrl,
 
-    boolean active
+    boolean active,
 
-    // category
+    CategoryResponseDTO categoryResponseDTO
 ) {}

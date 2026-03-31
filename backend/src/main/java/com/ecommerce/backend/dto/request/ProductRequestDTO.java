@@ -18,7 +18,9 @@ public record ProductRequestDTO(
     @Max(255)
     String imageUrl,
 
-    boolean active
+    boolean active,
 
-    //category_id
+    @NotBlank(message = "Category is required")
+    int category_id
+
 ) {}
