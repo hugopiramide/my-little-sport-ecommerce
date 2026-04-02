@@ -1,5 +1,6 @@
 package com.ecommerce.backend.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -17,33 +18,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_variant")
+@Table(name = "order_table")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProductVariant {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "order_date")
+    private LocalDateTime order_date = LocalDateTime.now();
+
+    @Column(name = "status", length = 30)
+    private String status;
+
+    @Column(name = "total_price")
+    private double total_price = 0.0;
+
+    @Column(name = "shipping_addres", length = 255)
+    private String shipping_addres;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToMany(mappedBy = "productVariant", orphanRemoval = true)
-    private List<CartItems> cartItems;
-
-    @OneToMany(mappedBy = "productVariant", orphanRemoval = true)
+    @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems;
-
-    @Column(name = "size", length = 10)
-    private String size;
-
-    @Column(name = "stock")
-    private Long stock = 0L;
-
-    @Column(name = "price_modifier", length = 10)
-    private double priceModifier = 0.0;
 }
 

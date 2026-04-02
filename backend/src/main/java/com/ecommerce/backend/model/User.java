@@ -3,6 +3,8 @@ package com.ecommerce.backend.model;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.OneToMany;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +37,9 @@ public class User implements UserDetails{
 
     @OneToOne(mappedBy = "user")
     private Cart cart;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
     @Embedded
     private PersonalData personalData;

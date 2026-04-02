@@ -16,12 +16,14 @@ public interface ProductVariantMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cartItems", ignore = true)
+    @Mapping(target = "orderItems", ignore = true)
     @Mapping(source = "product_id", target = "product.id")
     @Mapping(source = "price_modifier", target = "priceModifier")
     ProductVariant toEntity(ProductVariantRequestDTO productVariantRequestDTO);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cartItems", ignore = true)
+    @Mapping(target = "orderItems", ignore = true)
     @Mapping(source = "product_id", target = "product.id")
     @Mapping(source = "price_modifier", target = "priceModifier")
     void updateEntityFromRequestDto(ProductVariantRequestDTO dto, @MappingTarget ProductVariant entity);
