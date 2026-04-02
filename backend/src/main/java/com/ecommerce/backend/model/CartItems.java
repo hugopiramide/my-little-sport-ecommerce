@@ -1,8 +1,5 @@
 package com.ecommerce.backend.model;
 
-import java.util.List;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,37 +7,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_variant")
+@Table(name = "cart_items")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProductVariant {
+public class CartItems {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
 
-    @OneToMany(mappedBy = "productVariant", orphanRemoval = true)
-    private List<CartItems> cartItems;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_variant_id", nullable = false)
+    private ProductVariant productVariant;
 
-    @Column(name = "size", length = 10)
-    private String size;
-
-    @Column(name = "stock")
-    private Long stock = 0L;
-
-    @Column(name = "price_modifier", length = 10)
-    private double priceModifier = 0.0;
+    private Long quantity = 1L;
 }
 
