@@ -41,6 +41,9 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
+    @OneToMany(mappedBy = "user")
+    private List<UserFavorite> userFavorites;
+
     @Embedded
     private PersonalData personalData;
 

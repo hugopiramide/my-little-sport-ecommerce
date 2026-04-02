@@ -21,6 +21,7 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "productVariants", ignore = true)
+    @Mapping(target = "userFavorites", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
@@ -31,6 +32,7 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "productVariants", ignore = true)
+    @Mapping(target = "userFavorites", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
