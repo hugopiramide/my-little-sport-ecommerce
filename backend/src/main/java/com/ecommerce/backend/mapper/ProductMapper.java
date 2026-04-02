@@ -20,6 +20,7 @@ public interface ProductMapper {
     ProductResponseDTO toProductResponseDTO(Product product);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "productVariants", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
@@ -29,6 +30,7 @@ public interface ProductMapper {
     Product toEntity(ProductRequestDTO productRequestDTO);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "productVariants", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
