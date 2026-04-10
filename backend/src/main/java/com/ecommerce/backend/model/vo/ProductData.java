@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class ProductData {
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false, unique = true)
     private String name;
 
     private String description;
 
-    @Column(name = "base_price")
+    @Column(name = "base_price", nullable = false)
     private double basePrice = 0.00;
 
     @Column(name = "image_url", length = 255)

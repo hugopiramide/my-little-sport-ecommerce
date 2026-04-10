@@ -1,6 +1,7 @@
 package com.ecommerce.backend.model.vo;
 
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,9 +10,9 @@ import java.time.LocalDate;
 import java.time.Period;
 
 @Embeddable
-@NoArgsConstructor
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Birthday {
 
     private LocalDate date;

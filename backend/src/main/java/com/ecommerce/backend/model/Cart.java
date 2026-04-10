@@ -3,6 +3,10 @@ package com.ecommerce.backend.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,13 +16,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cart")
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Cart {
@@ -31,6 +33,9 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "cart", orphanRemoval = true)
     private List<CartItems> cartItems;
 

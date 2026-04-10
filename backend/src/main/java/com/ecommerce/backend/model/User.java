@@ -3,13 +3,18 @@ package com.ecommerce.backend.model;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.OneToMany;
+
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ecommerce.backend.model.enums.Role;
+import com.ecommerce.backend.model.vo.Birthday;
 import com.ecommerce.backend.model.vo.Password;
 import com.ecommerce.backend.model.vo.PersonalData;
 
@@ -35,12 +40,21 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "user")
     private List<UserFavorite> userFavorites;
 
@@ -52,13 +66,13 @@ public class User implements UserDetails{
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    
+
     public User(PersonalData personalData, Password password, Role role) {
         this.personalData = personalData;
         this.password = password;
         this.role = role;
     }
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

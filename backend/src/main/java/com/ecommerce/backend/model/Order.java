@@ -3,8 +3,15 @@ package com.ecommerce.backend.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ecommerce.backend.model.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,13 +20,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "orders")
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class Order {
@@ -31,8 +36,9 @@ public class Order {
     @Column(name = "order_date")
     private LocalDateTime order_date = LocalDateTime.now();
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 30)
-    private String status;
+    private OrderStatus status;
 
     @Column(name = "total_price")
     private double total_price = 0.0;
@@ -44,7 +50,9 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems;
 }
-
