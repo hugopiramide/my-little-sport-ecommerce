@@ -1,0 +1,184 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Management Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/css/index.css"/>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">My Little Sport - Administration Panel</div>
+      <ul class="menu">
+        <li th:each="entity : ${entities}">
+          <a th:href="'#' + ${entity.key}" th:text="${entity.title}">Entity</a>
+        </li>
+      </ul>
+      <div class="sidebar-actions">
+        <form th:action="@{/logout}" method="post" >
+          <button type="submit" class="btn logout-btn">Logout</button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <div>
+          <h1 class="title">Administration Panel</h1>
+          <p class="subtitle">
+            Warning: Any changes on this page may affect the proper operation of the store.
+          </p>
+        </div>
+      </header>
+
+      <section
+        class="entity-card"
+        th:if="${flashTitle != null}"
+        th:classappend="${flashType == 'ok'} ? ' status-ok' : ' status-error'">
+        <div class="entity-head">
+          <h2 th:text="${flashTitle}">Result</h2>
+        </div>
+        <pre class="result" th:text="${flashBody}">No output.</pre>
+      </section>
+
+      <section class="entities">
+        <article class="entity-card" th:each="entity : ${entities}" th:id="${entity.key}" th:if="${entity.key != 'users'}">
+          <div class="entity-head">
+            <h2 th:text="${entity.title}">Entity</h2>
+            <code th:text="${entity.basePath}">/api/entity</code>
+          </div>
+          <div class="ops">
+            <section class="op-box">
+              <h3>VIEW</h3>
+              <a th:href="@{/manage/{entity}/list(entity=${entity.key})}" class="btn entity-list-btn">List <span th:text="${entity.title}"></span></a>
+            </section>
+
+            <section class="op-box" th:if="${entity.key != 'orders' and entity.key != 'order-items' and entity.key != 'user-favorites' and entity.key != 'carts' and entity.key != 'cart-items'}">
+              <h3>CREATE</h3>
+              <form method="post" th:action="@{/manage/{entity}/create(entity=${entity.key})}">
+                <th:block th:switch="${entity.key}">
+                  <th:block th:case="'categories'">
+                    <label th:for="${entity.key + '-post-name'}">Name</label>
+                    <input name="name" th:id="${entity.key + '-post-name'}" type="text" required/>
+                    <label th:for="${entity.key + '-post-description'}">Description</label>
+                    <textarea name="description" th:id="${entity.key + '-post-description'}"></textarea>
+                  </th:block>
+                  <th:block th:case="'products'">
+                    <label th:for="${entity.key + '-post-name'}">Name</label>
+                    <input name="name" th:id="${entity.key + '-post-name'}" type="text" required/>
+                    <label th:for="${entity.key + '-post-description'}">Description</label>
+                    <textarea name="description" th:id="${entity.key + '-post-description'}"></textarea>
+                    <label th:for="${entity.key + '-post-basePrice'}">Base Price</label>
+                    <input name="basePrice" th:id="${entity.key + '-post-basePrice'}" type="number" step="0.01" min="0" required/>
+                    <label th:for="${entity.key + '-post-imageUrl'}">Image URL</label>
+                    <input name="imageUrl" th:id="${entity.key + '-post-imageUrl'}" type="text"/>
+                    <label th:for="${entity.key + '-post-category-id'}">Category</label>
+                    <select name="category_id" class="select-edit" th:id="${entity.key + '-post-category-id'}" required>
+                      <option value="" disabled selected>Select a category</option>
+                      <option th:each="cat : ${allCategories}"
+                              th:value="${cat.id}"
+                              th:text="${cat.id + ' - ' + cat.name}">1 - Name</option>
+                    </select>
+                    <label><input name="active" type="checkbox"/> Active</label>
+                  </th:block>
+                  <th:block th:case="'product-variants'">
+                    <label th:for="${entity.key + '-post-product-id'}">Product ID</label>
+                    <input name="product_id" th:id="${entity.key + '-post-product-id'}" type="number" min="1" required/>
+                    <label th:for="${entity.key + '-post-size'}">Size</label>
+                    <input name="size" th:id="${entity.key + '-post-size'}" type="text" required/>
+                    <label th:for="${entity.key + '-post-stock'}">Stock</label>
+                    <input name="stock" th:id="${entity.key + '-post-stock'}" type="number" min="0" required/>
+                    <label th:for="${entity.key + '-post-price-modifier'}">Price Modifier</label>
+                    <input name="price_modifier" th:id="${entity.key + '-post-price-modifier'}" type="number" step="0.01" min="0" required/>
+                  </th:block>
+                  <th:block th:case="'carts'">
+                    <label th:for="${entity.key + '-post-user-id'}">User ID</label>
+                    <input name="user_id" th:id="${entity.key + '-post-user-id'}" type="number" min="1" required/>
+                  </th:block>
+                  <th:block th:case="'cart-items'">
+                    <label th:for="${entity.key + '-post-cart-id'}">Cart ID</label>
+                    <input name="cart_id" th:id="${entity.key + '-post-cart-id'}" type="number" min="1" required/>
+                    <label th:for="${entity.key + '-post-product-variant-id'}">Product Variant ID</label>
+                    <input name="product_variant_id" th:id="${entity.key + '-post-product-variant-id'}" type="number" min="1" required/>
+                    <label th:for="${entity.key + '-post-quantity'}">Quantity</label>
+                    <input name="quantity" th:id="${entity.key + '-post-quantity'}" type="number" min="1" required/>
+                  </th:block>
+                </th:block>
+                <button class="btn" type="submit">Create</button>
+              </form>
+            </section>
+
+          </div>
+        </article>
+
+        <article class="entity-card" id="users">
+          <div class="entity-head">
+            <h2>Users</h2>
+          </div>
+
+          <div class="ops">
+            <section class="op-box">
+              <h3>Search user by username</h3>
+              <form method="get" th:action="@{/manage/users/search}">
+                <label for="user-search-username">Username</label>
+                <input
+                  id="user-search-username"
+                  name="username"
+                  type="text"
+                  placeholder="admin"
+                  required/>
+                <button class="btn" type="submit">Search</button>
+              </form>
+            </section>
+          </div>
+
+          <section
+            class="search-result"
+            th:if="${userSearchTitle != null}"
+            th:classappend="${userSearchType == 'ok'} ? ' status-ok' : ' status-error'">
+            <h3 th:text="${userSearchTitle}">User search result</h3>
+            <div class="user-info-card" th:if="${userSearchUser != null}">
+              <div class="user-info-row">
+                <span class="user-info-label">ID</span>
+                <span class="user-info-value" th:text="${userSearchUser.id}">1</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Name</span>
+                <span class="user-info-value" th:text="${userSearchUser.name}">Admin</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Surname</span>
+                <span class="user-info-value" th:text="${userSearchUser.surname}">Test</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Username</span>
+                <span class="user-info-value" th:text="${userSearchUser.username}">admin</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Email</span>
+                <span class="user-info-value" th:text="${userSearchUser.email}">admin@example.com</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Fecha de nacimiento</span>
+                <span class="user-info-value" th:text="${userSearchUser.birthday}">1990-01-01</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Imagen de perfil</span>
+                <span class="user-info-value" th:text="${userSearchUser.profileImgUrl}">-</span>
+              </div>
+              <div class="user-info-row">
+                <span class="user-info-label">Rol</span>
+                <span class="user-info-value" th:text="${userSearchUser.role}">ADMIN</span>
+              </div>
+            </div>
+            <div class="result" th:if="${userSearchError != null}" th:text="${userSearchError}">Error.</div>
+          </section>
+        </article>
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>
