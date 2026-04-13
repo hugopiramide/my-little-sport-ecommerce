@@ -13,15 +13,16 @@ import com.ecommerce.backend.model.enums.Role;
 import com.ecommerce.backend.model.vo.Password;
 import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.repository.UserRepository;
+import com.ecommerce.backend.service.interfaces.JwtService;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final JwtServiceImpl jwtService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthService( UserRepository userRepository, JwtServiceImpl jwtService, AuthenticationManager authenticationManager ) {
+    public AuthService( UserRepository userRepository, JwtService jwtService, AuthenticationManager authenticationManager ) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
