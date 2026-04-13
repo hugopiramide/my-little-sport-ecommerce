@@ -76,4 +76,18 @@ public class AuthService {
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
     }
+
+    public AuthResponse loginAdmin(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.username(), request.password())
+        );
+
+        User user = (User) authentication.getPrincipal();
+        if (user.getRole() != Role.ADMIN) {
+            throw new IllegalArgumentException("Only ADMIN users can log in");
+        }
+
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthResponse(jwtToken);
+    }
 }

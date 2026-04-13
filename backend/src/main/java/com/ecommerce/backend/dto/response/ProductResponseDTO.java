@@ -1,5 +1,7 @@
 package com.ecommerce.backend.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record ProductResponseDTO(
 
     Long id,
@@ -14,5 +16,6 @@ public record ProductResponseDTO(
 
     boolean active,
 
-    CategoryResponseDTO categoryResponseDTO
+    @JsonProperty("category_id")
+    Long categoryId
 ) {}

@@ -5,11 +5,13 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.backend.dto.request.ProductVariantRequestDTO;
 import com.ecommerce.backend.dto.response.ProductVariantResponseDTO;
 import com.ecommerce.backend.mapper.ProductVariantMapper;
 import com.ecommerce.backend.model.ProductVariant;
+import com.ecommerce.backend.repository.OrderItemRepository;
 import com.ecommerce.backend.repository.ProductVariantRepository;
 import com.ecommerce.backend.service.interfaces.ProductVariantService;
 
@@ -17,10 +19,14 @@ import com.ecommerce.backend.service.interfaces.ProductVariantService;
 public class ProductVariantServiceImpl implements ProductVariantService {
 
     private final ProductVariantRepository productVariantRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductVariantMapper productVariantMapper;
 
-    public ProductVariantServiceImpl(ProductVariantRepository productVariantRepository, ProductVariantMapper productVariantMapper) {
+    public ProductVariantServiceImpl(ProductVariantRepository productVariantRepository,
+            OrderItemRepository orderItemRepository,
+            ProductVariantMapper productVariantMapper) {
         this.productVariantRepository = productVariantRepository;
+        this.orderItemRepository = orderItemRepository;
         this.productVariantMapper = productVariantMapper;
     }
 
@@ -62,11 +68,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         if (!productVariantRepository.existsById(id)) {
             throw new RuntimeException("ProductVariant not found with id: " + id);
         }
+        orderItemRepository.clearProductVariantReference(id);
         productVariantRepository.deleteById(id);
     }
 }
+
 

@@ -1,15 +1,19 @@
 package com.ecommerce.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.backend.dto.request.ProductRequestDTO;
 import com.ecommerce.backend.dto.response.ProductResponseDTO;
 import com.ecommerce.backend.mapper.ProductMapper;
 import com.ecommerce.backend.model.Product;
+import com.ecommerce.backend.model.ProductVariant;
+import com.ecommerce.backend.repository.OrderItemRepository;
 import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.service.interfaces.ProductService;
 
@@ -17,10 +21,13 @@ import com.ecommerce.backend.service.interfaces.ProductService;
 public class ProductServiceImpl implements ProductService {
     
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, OrderItemRepository orderItemRepository,
+            ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
         this.productMapper = productMapper;
     }
 
@@ -63,16 +70,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
-        if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found with id: " + id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+
+        if (product.getProductVariants() != null && !product.getProductVariants().isEmpty()) {
+            List<Long> variantIds = product.getProductVariants().stream()
+                    .map(ProductVariant::getId)
+                    .collect(Collectors.toList());
+            orderItemRepository.clearProductVariantReferences(variantIds);
         }
-        productRepository.deleteById(id);
+        productRepository.delete(product);
     }
 
     @Override
-    public List<ProductResponseDTO> searchByName(String name) {
-        return productRepository.findByProductDataNameContainingIgnoreCase(name).stream()
+    public List<ProductResponseDTO> search(String query) {
+        return productRepository.findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query).stream()
                 .map(productMapper::toProductResponseDTO)
                 .toList();
     }

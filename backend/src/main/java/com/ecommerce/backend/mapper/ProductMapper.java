@@ -16,7 +16,7 @@ public interface ProductMapper {
     @Mapping(source = "productData.basePrice", target = "basePrice")
     @Mapping(source = "productData.imageUrl", target = "imageUrl")
     @Mapping(source = "active", target = "active")
-    @Mapping(source = "category", target = "categoryResponseDTO")
+    @Mapping(source = "category.id", target = "categoryId")
     ProductResponseDTO toProductResponseDTO(Product product);
 
     @Mapping(target = "id", ignore = true)

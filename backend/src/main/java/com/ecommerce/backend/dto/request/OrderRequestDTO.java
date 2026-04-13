@@ -1,5 +1,6 @@
 package com.ecommerce.backend.dto.request;
 
+import com.ecommerce.backend.model.enums.OrderStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,9 +10,8 @@ public record OrderRequestDTO(
     @NotNull(message = "User is required")
     Long user_id,
 
-    @NotBlank(message = "Status is required")
-    @Size(max = 30, message = "Status must be at most 30 characters")
-    String status,
+    @NotNull(message = "Status is required")
+    OrderStatus status,
 
     double total_price,
 
@@ -20,4 +20,3 @@ public record OrderRequestDTO(
     String shipping_addres
 
 ) {}
-

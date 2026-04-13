@@ -5,6 +5,12 @@ public record OrderItemResponseDTO(
     Long orderId,
     Long productVariantId,
     Long quantity,
-    double price_at_purchase
+    double price_at_purchase,
+    // Data Snapshot
+    String productName,
+    String productSize,
+    String productImageUrl,
+    double basePrice,
+    double priceModifier
 ) {}
 

@@ -2,12 +2,15 @@ package com.ecommerce.backend.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.ecommerce.backend.model.enums.OrderStatus;
+
 public record OrderResponseDTO(
     Long id,
     LocalDateTime order_date,
-    String status,
+    OrderStatus status,
     double total_price,
     String shipping_addres,
-    Long userId
+    Long userId,
+    String userName,
+    String userEmail
 ) {}
-

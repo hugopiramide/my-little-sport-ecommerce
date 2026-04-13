@@ -22,6 +22,6 @@ public interface ProductService {
 
     public void deleteById(Long id);
     
-    public List<ProductResponseDTO> searchByName(String name);
+    public List<ProductResponseDTO> search(String query);
 
 }

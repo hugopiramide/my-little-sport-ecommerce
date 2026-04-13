@@ -12,6 +12,8 @@ import com.ecommerce.backend.model.Order;
 public interface OrderMapper {
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "user.personalData.name", target = "userName")
+    @Mapping(source = "user.personalData.email", target = "userEmail")
     OrderResponseDTO toOrderResponseDTO(Order order);
 
     @Mapping(target = "id", ignore = true)
