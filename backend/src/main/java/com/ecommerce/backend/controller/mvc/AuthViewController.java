@@ -14,7 +14,7 @@ public class AuthViewController {
             Model model
     ) {
         if (error != null) {
-            model.addAttribute("error", "Credenciales inválidas");
+            model.addAttribute("error", "Invalid credentials");
         }
         return "login";
     }

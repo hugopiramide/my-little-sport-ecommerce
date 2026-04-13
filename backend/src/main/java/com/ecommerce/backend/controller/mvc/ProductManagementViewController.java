@@ -58,11 +58,11 @@ public class ProductManagementViewController extends BaseManagementController {
             );
             Object result = productService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en products");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on products");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre products");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on products");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#products";
@@ -81,11 +81,11 @@ public class ProductManagementViewController extends BaseManagementController {
             );
             Object result = productService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en products");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on products");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre products");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on products");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#products";
@@ -96,11 +96,11 @@ public class ProductManagementViewController extends BaseManagementController {
         try {
             productService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en products");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on products");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre products");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on products");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#products";

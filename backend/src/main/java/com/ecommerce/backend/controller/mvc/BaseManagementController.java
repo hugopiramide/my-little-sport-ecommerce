@@ -25,14 +25,13 @@ public abstract class BaseManagementController {
     protected String requiredText(Map<String, String> formData, String key) {
         String value = optionalText(formData, key);
         if (value == null) {
-            throw new IllegalArgumentException("El campo " + key + " es obligatorio.");
+            throw new IllegalArgumentException("The field " + key + " is required.");
         }
         return value;
     }
 
     protected String optionalText(Map<String, String> formData, String key) {
         String value = formData.get(key);
-        System.out.println("Extracted value for key '" + key + "': '" + value + "'"); // Debugging line
         if (value == null) {
             return null;
         }
@@ -45,7 +44,7 @@ public abstract class BaseManagementController {
             String value = requiredText(formData, key);
             return Long.parseLong(value);
         } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("El campo " + key + " debe ser numerico.");
+            throw new IllegalArgumentException("The field " + key + " must be numeric.");
         }
     }
 
@@ -54,7 +53,7 @@ public abstract class BaseManagementController {
             String value = requiredText(formData, key);
             return Integer.parseInt(value);
         } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("El campo " + key + " debe ser numerico.");
+            throw new IllegalArgumentException("The field " + key + " must be numeric.");
         }
     }
 
@@ -63,7 +62,7 @@ public abstract class BaseManagementController {
             String value = requiredText(formData, key);
             return Double.parseDouble(value);
         } catch (NumberFormatException ex) {
-            throw new IllegalArgumentException("El campo " + key + " debe ser decimal.");
+            throw new IllegalArgumentException("The field " + key + " must be a decimal number.");
         }
     }
 

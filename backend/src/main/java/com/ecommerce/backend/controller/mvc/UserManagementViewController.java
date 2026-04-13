@@ -27,11 +27,11 @@ public class UserManagementViewController extends BaseManagementController {
     ) {
         try {
             if (username == null || username.trim().isEmpty()) {
-                throw new IllegalArgumentException("Debes indicar un nombre de usuario.");
+                throw new IllegalArgumentException("You must provide a username.");
             }
 
             User user = userRepository.findByPersonalDataUsername(username.trim())
-                    .orElseThrow(() -> new IllegalArgumentException("No existe usuario con username: " + username));
+                    .orElseThrow(() -> new IllegalArgumentException("No user found with username: " + username));
 
             UserCardView userCard = new UserCardView(
                     user.getId(),
@@ -48,11 +48,11 @@ public class UserManagementViewController extends BaseManagementController {
             );
 
             redirectAttributes.addFlashAttribute("userSearchType", "ok");
-            redirectAttributes.addFlashAttribute("userSearchTitle", "Usuario encontrado");
+            redirectAttributes.addFlashAttribute("userSearchTitle", "User found");
             redirectAttributes.addFlashAttribute("userSearchUser", userCard);
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("userSearchType", "error");
-            redirectAttributes.addFlashAttribute("userSearchTitle", "Error en busqueda de usuario");
+            redirectAttributes.addFlashAttribute("userSearchTitle", "Error in user search");
             redirectAttributes.addFlashAttribute("userSearchError", ex.getMessage());
         }
 

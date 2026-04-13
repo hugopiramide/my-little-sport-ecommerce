@@ -43,11 +43,11 @@ public class UserFavoriteManagementViewController extends BaseManagementControll
             );
             Object result = userFavoriteService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en user-favorites");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on user-favorites");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre user-favorites");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on user-favorites");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#user-favorites";
@@ -63,11 +63,11 @@ public class UserFavoriteManagementViewController extends BaseManagementControll
             );
             Object result = userFavoriteService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en user-favorites");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on user-favorites");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre user-favorites");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on user-favorites");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#user-favorites";
@@ -78,11 +78,11 @@ public class UserFavoriteManagementViewController extends BaseManagementControll
         try {
             userFavoriteService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en user-favorites");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on user-favorites");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre user-favorites");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on user-favorites");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#user-favorites";

@@ -45,11 +45,11 @@ public class OrderManagementViewController extends BaseManagementController {
             );
             Object result = orderService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en orders");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on orders");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre orders");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on orders");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#orders";
@@ -66,11 +66,11 @@ public class OrderManagementViewController extends BaseManagementController {
             );
             Object result = orderService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en orders");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on orders");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre orders");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on orders");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#orders";
@@ -81,11 +81,11 @@ public class OrderManagementViewController extends BaseManagementController {
         try {
             orderService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en orders");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on orders");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre orders");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on orders");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#orders";

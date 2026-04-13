@@ -43,11 +43,11 @@ public class CartItemsManagementViewController extends BaseManagementController 
             );
             Object result = cartItemsService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en cart-items");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on cart-items");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre cart-items");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on cart-items");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#cart-items";
@@ -63,11 +63,11 @@ public class CartItemsManagementViewController extends BaseManagementController 
             );
             Object result = cartItemsService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en cart-items");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on cart-items");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre cart-items");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on cart-items");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#cart-items";
@@ -78,11 +78,11 @@ public class CartItemsManagementViewController extends BaseManagementController 
         try {
             cartItemsService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en cart-items");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on cart-items");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre cart-items");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on cart-items");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#cart-items";

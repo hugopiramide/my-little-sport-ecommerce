@@ -46,11 +46,11 @@ public class ProductVariantManagementViewController extends BaseManagementContro
             );
             Object result = productVariantService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en product-variants");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on product-variants");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre product-variants");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on product-variants");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#product-variants";
@@ -59,21 +59,19 @@ public class ProductVariantManagementViewController extends BaseManagementContro
     @PostMapping("/update")
     public String update(@RequestParam Long id, @RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
         try {
-            System.out.println("Form Data: " + formData); // Debugging line
             ProductVariantRequestDTO dto = new ProductVariantRequestDTO(
                     requiredLong(formData, "productId"),
                     requiredText(formData, "size"),
                     requiredLong(formData, "stock"),
                     requiredDouble(formData, "priceModifier")
             );
-            System.out.println("DTO Created: " + dto); // Debugging line
             Object result = productVariantService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en product-variants");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on product-variants");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre product-variants");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on product-variants");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#product-variants";
@@ -84,11 +82,11 @@ public class ProductVariantManagementViewController extends BaseManagementContro
         try {
             productVariantService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en product-variants");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on product-variants");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre product-variants");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on product-variants");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#product-variants";

@@ -42,11 +42,11 @@ public class CategoryManagementViewController extends BaseManagementController {
             );
             Object result = categoryService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en categories");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on categories");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre categories");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on categories");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#categories";
@@ -61,11 +61,11 @@ public class CategoryManagementViewController extends BaseManagementController {
             );
             Object result = categoryService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en categories");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on categories");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre categories");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on categories");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#categories";
@@ -76,11 +76,11 @@ public class CategoryManagementViewController extends BaseManagementController {
         try {
             categoryService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en categories");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on categories");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre categories");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on categories");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#categories";

@@ -39,11 +39,11 @@ public class CartManagementViewController extends BaseManagementController {
             CartRequestDTO dto = new CartRequestDTO(requiredLong(formData, "user_id"));
             Object result = cartService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "POST ejecutado en carts");
+            redirectAttributes.addFlashAttribute("flashTitle", "POST executed on carts");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en POST sobre carts");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in POST on carts");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#carts";
@@ -55,11 +55,11 @@ public class CartManagementViewController extends BaseManagementController {
             CartRequestDTO dto = new CartRequestDTO(requiredLong(formData, "user_id"));
             Object result = cartService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "PUT ejecutado en carts");
+            redirectAttributes.addFlashAttribute("flashTitle", "PUT executed on carts");
             redirectAttributes.addFlashAttribute("flashBody", objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result));
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en PUT sobre carts");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in PUT on carts");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#carts";
@@ -70,11 +70,11 @@ public class CartManagementViewController extends BaseManagementController {
         try {
             cartService.deleteById(id);
             redirectAttributes.addFlashAttribute("flashType", "ok");
-            redirectAttributes.addFlashAttribute("flashTitle", "DELETE ejecutado en carts");
-            redirectAttributes.addFlashAttribute("flashBody", "Operacion completada sin contenido.");
+            redirectAttributes.addFlashAttribute("flashTitle", "DELETE executed on carts");
+            redirectAttributes.addFlashAttribute("flashBody", "Operation completed with no content.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("flashType", "error");
-            redirectAttributes.addFlashAttribute("flashTitle", "Error en DELETE sobre carts");
+            redirectAttributes.addFlashAttribute("flashTitle", "Error in DELETE on carts");
             redirectAttributes.addFlashAttribute("flashBody", ex.getMessage());
         }
         return "redirect:/#carts";
