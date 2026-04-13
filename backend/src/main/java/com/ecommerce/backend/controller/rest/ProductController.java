@@ -47,8 +47,8 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductResponseDTO>> searchProductsByName(@RequestParam String name) {
-        return ResponseEntity.ok(productService.searchByName(name));
+    public ResponseEntity<List<ProductResponseDTO>> searchProducts(@RequestParam String query) {
+        return ResponseEntity.ok(productService.searchByNameAndDescription(query));
     }
 
     @PostMapping

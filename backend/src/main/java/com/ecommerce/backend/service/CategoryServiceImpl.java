@@ -11,22 +11,21 @@ import com.ecommerce.backend.dto.request.CategoryRequestDTO;
 import com.ecommerce.backend.dto.response.CategoryResponseDTO;
 import com.ecommerce.backend.mapper.CategoryMapper;
 import com.ecommerce.backend.model.Category;
-import com.ecommerce.backend.model.Product;
 import com.ecommerce.backend.repository.CategoryRepository;
-import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.service.interfaces.CategoryService;
+import com.ecommerce.backend.service.interfaces.ProductService;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, ProductRepository productRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, ProductService productService) {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
-        this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @Override
@@ -68,18 +67,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        
-        List<Product> products = category.getProducts();
-        if (products != null && !products.isEmpty()) {
-            for (Product product : products) {
-                product.setCategory(null);
-                productRepository.save(product);
-            }
+        if (!categoryRepository.existsById(id)) {
+            throw new RuntimeException("Category not found with id: " + id);
         }
-        
-        categoryRepository.delete(category);
+        productService.nullifyCategory(id);
+        categoryRepository.deleteById(id);
     }
 
 }

@@ -21,7 +21,9 @@ public interface ProductService {
     public ProductResponseDTO updateFromDto(Long id, ProductRequestDTO productRequestDTO);
 
     public void deleteById(Long id);
-    
-    public List<ProductResponseDTO> search(String query);
+
+    public void nullifyCategory(Long categoryId);
+
+    public List<ProductResponseDTO> searchByNameAndDescription(String query);
 
 }

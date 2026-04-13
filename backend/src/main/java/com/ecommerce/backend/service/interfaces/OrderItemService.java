@@ -21,5 +21,9 @@ public interface OrderItemService {
     OrderItemResponseDTO updateFromDto(Long id, OrderItemRequestDTO orderItemRequestDTO);
 
     void deleteById(Long id);
+
+    void clearProductVariantReferences(List<Long> variantIds);
+
+    void clearProductVariantReference(Long variantId);
 }
 

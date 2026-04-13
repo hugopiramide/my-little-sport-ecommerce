@@ -2,6 +2,7 @@ package com.ecommerce.backend.service;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,22 +12,22 @@ import com.ecommerce.backend.dto.request.ProductVariantRequestDTO;
 import com.ecommerce.backend.dto.response.ProductVariantResponseDTO;
 import com.ecommerce.backend.mapper.ProductVariantMapper;
 import com.ecommerce.backend.model.ProductVariant;
-import com.ecommerce.backend.repository.OrderItemRepository;
 import com.ecommerce.backend.repository.ProductVariantRepository;
+import com.ecommerce.backend.service.interfaces.OrderItemService;
 import com.ecommerce.backend.service.interfaces.ProductVariantService;
 
 @Service
 public class ProductVariantServiceImpl implements ProductVariantService {
 
     private final ProductVariantRepository productVariantRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderItemService orderItemService;
     private final ProductVariantMapper productVariantMapper;
 
     public ProductVariantServiceImpl(ProductVariantRepository productVariantRepository,
-            OrderItemRepository orderItemRepository,
+            @Lazy OrderItemService orderItemService,
             ProductVariantMapper productVariantMapper) {
         this.productVariantRepository = productVariantRepository;
-        this.orderItemRepository = orderItemRepository;
+        this.orderItemService = orderItemService;
         this.productVariantMapper = productVariantMapper;
     }
 
@@ -73,8 +74,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
         if (!productVariantRepository.existsById(id)) {
             throw new RuntimeException("ProductVariant not found with id: " + id);
         }
-        orderItemRepository.clearProductVariantReference(id);
+        orderItemService.clearProductVariantReference(id);
         productVariantRepository.deleteById(id);
+    }
+
+    @Override
+    public ProductVariant findEntityById(Long id) {
+        return productVariantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ProductVariant not found with id: " + id));
     }
 }
 

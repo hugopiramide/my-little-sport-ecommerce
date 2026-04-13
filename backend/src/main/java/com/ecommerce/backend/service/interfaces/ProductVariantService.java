@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.ecommerce.backend.dto.request.ProductVariantRequestDTO;
 import com.ecommerce.backend.dto.response.ProductVariantResponseDTO;
+import com.ecommerce.backend.model.ProductVariant;
 
 public interface ProductVariantService {
 
@@ -21,5 +22,7 @@ public interface ProductVariantService {
     ProductVariantResponseDTO updateFromDto(Long id, ProductVariantRequestDTO productVariantRequestDTO);
 
     void deleteById(Long id);
+
+    ProductVariant findEntityById(Long id);
 }
 

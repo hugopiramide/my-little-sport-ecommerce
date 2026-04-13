@@ -22,23 +22,23 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "productVariants", ignore = true)
     @Mapping(target = "userFavorites", ignore = true)
+    @Mapping(target = "category", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
     @Mapping(source = "imageUrl", target = "productData.imageUrl")
     @Mapping(source = "active", target = "active")
-    @Mapping(source = "category_id", target = "category.id")
     Product toEntity(ProductRequestDTO productRequestDTO);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "productVariants", ignore = true)
     @Mapping(target = "userFavorites", ignore = true)
+    @Mapping(target = "category", ignore = true)
     @Mapping(source = "name", target = "productData.name")
     @Mapping(source = "description", target = "productData.description")
     @Mapping(source = "basePrice", target = "productData.basePrice")
     @Mapping(source = "imageUrl", target = "productData.imageUrl")
     @Mapping(source = "active", target = "active")
-    @Mapping(source = "category_id", target = "category.id")
     void updateEntityFromRequestDto(ProductRequestDTO dto, @MappingTarget Product entity);
 
 }
