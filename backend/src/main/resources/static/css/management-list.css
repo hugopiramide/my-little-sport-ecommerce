@@ -180,3 +180,80 @@ table tbody tr.row-editing {
 .mb-4 {
   margin-bottom: 1.5rem;
 }
+
+.filter-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.filter-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt-label);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-select,
+.filter-input {
+  padding: 10px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: var(--main);
+  color: var(--txt);
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  transition: all 0.15s ease;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-select:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+}
+
+.filter-select {
+  cursor: pointer;
+}
+
+.filter-input::placeholder {
+  color: var(--txt-hint);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 2px;
+}
+
+@media (max-width: 1200px) {
+  .filter-form-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .filter-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

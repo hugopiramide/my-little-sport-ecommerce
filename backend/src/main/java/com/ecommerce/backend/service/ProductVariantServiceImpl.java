@@ -78,4 +78,10 @@ public class ProductVariantServiceImpl extends BaseCrudServiceImpl<ProductVarian
         return repository.findById(id)
                 .orElseThrow(() -> entityNotFoundException(id));
     }
+
+    @Override
+    public List<ProductVariantResponseDTO> findByFilters(Long productId, Long stockMin, Long stockMax, String size) {
+        List<ProductVariant> variants = ((ProductVariantRepository) repository).findByFilters(productId, stockMin, stockMax, size);
+        return toDtoList(variants);
+    }
 }

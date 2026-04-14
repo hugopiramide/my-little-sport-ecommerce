@@ -72,6 +72,7 @@
   border: var(--line);
   border-radius: var(--radius);
   padding: 18px;
+  margin-bottom: 28px;
 }
 
 .entity-head {

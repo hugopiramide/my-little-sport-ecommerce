@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.backend.dto.request.ProductVariantRequestDTO;
+import com.ecommerce.backend.service.interfaces.ProductService;
 import com.ecommerce.backend.service.interfaces.ProductVariantService;
 
 import tools.jackson.databind.ObjectMapper;
@@ -20,18 +21,41 @@ import tools.jackson.databind.ObjectMapper;
 public class ProductVariantManagementViewController extends BaseManagementController {
 
     private final ProductVariantService productVariantService;
+    private final ProductService productService;
 
-    public ProductVariantManagementViewController(ProductVariantService productVariantService, ObjectMapper objectMapper) {
+    public ProductVariantManagementViewController(ProductVariantService productVariantService, ProductService productService, ObjectMapper objectMapper) {
         super(objectMapper);
         this.productVariantService = productVariantService;
+        this.productService = productService;
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId) {
+    public String list(Model model, 
+                       @RequestParam(required = false) Long editId,
+                       @RequestParam(required = false) Long productId,
+                       @RequestParam(required = false) Long stockMin,
+                       @RequestParam(required = false) Long stockMax,
+                       @RequestParam(required = false) String size) {
         model.addAttribute("entityName", "Product Variants");
         model.addAttribute("entityKey", "product-variants");
         model.addAttribute("editId", editId);
-        model.addAttribute("items", toMapList(productVariantService.findAll()));
+        
+        // Normalize empty string to null for proper filtering
+        String normalizedSize = (size != null && !size.isBlank()) ? size : null;
+
+        boolean hasFilters = (productId != null || stockMin != null || stockMax != null || normalizedSize != null);
+
+        if (hasFilters) {
+            model.addAttribute("items", toMapList(productVariantService.findByFilters(productId, stockMin, stockMax, normalizedSize)));
+            model.addAttribute("filterProductId", productId);
+            model.addAttribute("filterStockMin", stockMin);
+            model.addAttribute("filterStockMax", stockMax);
+            model.addAttribute("filterSize", normalizedSize);
+        } else {
+            model.addAttribute("items", toMapList(productVariantService.findAll()));
+        }
+        
+        model.addAttribute("allProducts", productService.findAll());
         return "management-list";
     }
 
