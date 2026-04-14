@@ -2,8 +2,6 @@ package com.ecommerce.backend.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,45 +15,72 @@ import com.ecommerce.backend.service.interfaces.OrderItemService;
 import com.ecommerce.backend.service.interfaces.ProductVariantService;
 
 @Service
-public class OrderItemServiceImpl implements OrderItemService {
+public class OrderItemServiceImpl extends BaseCrudServiceImpl<OrderItem, OrderItemResponseDTO, OrderItemRequestDTO, OrderItemRequestDTO> implements OrderItemService {
 
-    private final OrderItemRepository orderItemRepository;
     private final OrderItemMapper orderItemMapper;
     private final ProductVariantService productVariantService;
 
     public OrderItemServiceImpl(OrderItemRepository orderItemRepository, OrderItemMapper orderItemMapper, ProductVariantService productVariantService) {
-        this.orderItemRepository = orderItemRepository;
+        super(orderItemRepository);
         this.orderItemMapper = orderItemMapper;
         this.productVariantService = productVariantService;
     }
 
     @Override
-    public List<OrderItemResponseDTO> findAll() {
-        return orderItemRepository.findAll().stream()
-                .map(orderItemMapper::toOrderItemResponseDTO)
-                .toList();
+    protected OrderItemResponseDTO toDto(OrderItem entity) {
+        return orderItemMapper.toOrderItemResponseDTO(entity);
     }
 
     @Override
-    public Page<OrderItemResponseDTO> findAllPageable(Pageable pageable) {
-        return orderItemRepository.findAll(pageable)
-                .map(orderItemMapper::toOrderItemResponseDTO);
+    protected List<OrderItemResponseDTO> toDtoList(List<OrderItem> entities) {
+        return entities.stream().map(orderItemMapper::toOrderItemResponseDTO).toList();
     }
 
     @Override
-    public OrderItemResponseDTO findById(Long id) {
-        return orderItemRepository.findById(id)
-                .map(orderItemMapper::toOrderItemResponseDTO)
-                .orElseThrow(() -> new RuntimeException("OrderItem not found with id: " + id));
+    protected OrderItem toEntity(OrderItemRequestDTO dto) {
+        return orderItemMapper.toEntity(dto);
     }
 
     @Override
-    public OrderItemResponseDTO createFromDto(OrderItemRequestDTO orderItemRequestDTO) {
-        OrderItem entity = new OrderItem();
-        orderItemMapper.updateEntityFromRequestDto(orderItemRequestDTO, entity);
+    protected void updateEntity(OrderItemRequestDTO dto, OrderItem target) {
+        orderItemMapper.updateEntityFromRequestDto(dto, target);
+    }
 
-        if (orderItemRequestDTO.product_variant_id() != null) {
-            ProductVariant variant = productVariantService.findEntityById(orderItemRequestDTO.product_variant_id());
+    @Override
+    protected void updateEntityFromCreate(OrderItemRequestDTO dto, OrderItem target) {
+        orderItemMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected OrderItem newEntity() {
+        return new OrderItem();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "OrderItem";
+    }
+
+    @Override
+    protected void afterCreate(OrderItemRequestDTO dto, OrderItem entity) {
+        populateSnapshotFields(entity, dto.product_variant_id());
+    }
+
+    @Override
+    @Transactional
+    public void clearProductVariantReferences(List<Long> variantIds) {
+        ((OrderItemRepository) repository).clearProductVariantReferences(variantIds);
+    }
+
+    @Override
+    @Transactional
+    public void clearProductVariantReference(Long variantId) {
+        ((OrderItemRepository) repository).clearProductVariantReference(variantId);
+    }
+
+    private void populateSnapshotFields(OrderItem entity, Long variantId) {
+        if (variantId != null) {
+            ProductVariant variant = productVariantService.findEntityById(variantId);
 
             entity.setProductName(variant.getProduct().getProductData().getName());
             entity.setProductSize(variant.getSize());
@@ -66,38 +91,5 @@ public class OrderItemServiceImpl implements OrderItemService {
             double finalPrice = variant.getProduct().getProductData().getBasePrice() + variant.getPriceModifier();
             entity.setPrice_at_purchase(finalPrice);
         }
-
-        OrderItem saved = orderItemRepository.save(entity);
-        return orderItemMapper.toOrderItemResponseDTO(saved);
-    }
-
-    @Override
-    public OrderItemResponseDTO updateFromDto(Long id, OrderItemRequestDTO orderItemRequestDTO) {
-        OrderItem entity = orderItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("OrderItem not found with id: " + id));
-        orderItemMapper.updateEntityFromRequestDto(orderItemRequestDTO, entity);
-        OrderItem saved = orderItemRepository.save(entity);
-        return orderItemMapper.toOrderItemResponseDTO(saved);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        if (!orderItemRepository.existsById(id)) {
-            throw new RuntimeException("OrderItem not found with id: " + id);
-        }
-        orderItemRepository.deleteById(id);
-    }
-
-    @Override
-    @Transactional
-    public void clearProductVariantReferences(List<Long> variantIds) {
-        orderItemRepository.clearProductVariantReferences(variantIds);
-    }
-
-    @Override
-    @Transactional
-    public void clearProductVariantReference(Long variantId) {
-        orderItemRepository.clearProductVariantReference(variantId);
     }
 }
-

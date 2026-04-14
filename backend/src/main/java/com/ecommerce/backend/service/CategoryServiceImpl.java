@@ -2,8 +2,6 @@ package com.ecommerce.backend.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,62 +14,59 @@ import com.ecommerce.backend.service.interfaces.CategoryService;
 import com.ecommerce.backend.service.interfaces.ProductService;
 
 @Service
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryServiceImpl extends BaseCrudServiceImpl<Category, CategoryResponseDTO, CategoryRequestDTO, CategoryRequestDTO> implements CategoryService {
 
-    private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProductService productService;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, ProductService productService) {
-        this.categoryRepository = categoryRepository;
+        super(categoryRepository);
         this.categoryMapper = categoryMapper;
         this.productService = productService;
     }
 
     @Override
-    public List<CategoryResponseDTO> findAll() {
-        return categoryRepository.findAll().stream()
-                .map(categoryMapper::toCategoryResponseDTO)
-                .toList();
+    protected CategoryResponseDTO toDto(Category entity) {
+        return categoryMapper.toCategoryResponseDTO(entity);
     }
 
     @Override
-    public Page<CategoryResponseDTO> findAllPageable(Pageable pageable) {
-        return categoryRepository.findAll(pageable)
-                .map(categoryMapper::toCategoryResponseDTO);
+    protected List<CategoryResponseDTO> toDtoList(List<Category> entities) {
+        return entities.stream().map(categoryMapper::toCategoryResponseDTO).toList();
     }
 
     @Override
-    public CategoryResponseDTO findById(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        return categoryMapper.toCategoryResponseDTO(category);
+    protected Category toEntity(CategoryRequestDTO dto) {
+        return categoryMapper.toEntity(dto);
     }
 
     @Override
-    public CategoryResponseDTO createFromDto(CategoryRequestDTO categoryRequestDTO) {
-        Category category = categoryMapper.toEntity(categoryRequestDTO);
-        Category saved = categoryRepository.save(category);
-        return categoryMapper.toCategoryResponseDTO(saved);
+    protected void updateEntity(CategoryRequestDTO dto, Category target) {
+        categoryMapper.updateEntityFromRequestDto(dto, target);
     }
 
     @Override
-    public CategoryResponseDTO updateFromDto(Long id, CategoryRequestDTO categoryRequestDTO) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        categoryMapper.updateEntityFromRequestDto(categoryRequestDTO, category);
-        Category saved = categoryRepository.save(category);
-        return categoryMapper.toCategoryResponseDTO(saved);
+    protected void updateEntityFromCreate(CategoryRequestDTO dto, Category target) {
+        categoryMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected Category newEntity() {
+        return new Category();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "Category";
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Category not found with id: " + id);
+        if (!repository.existsById(id)) {
+            throw entityNotFoundException(id);
         }
         productService.nullifyCategory(id);
-        categoryRepository.deleteById(id);
+        repository.deleteById(id);
     }
-
 }

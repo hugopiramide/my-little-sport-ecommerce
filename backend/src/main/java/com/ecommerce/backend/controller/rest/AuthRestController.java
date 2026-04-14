@@ -28,9 +28,9 @@ public class AuthRestController {
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         try {
             AuthResponse response = authService.register(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);  // 201 Created
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();  // 400 Bad Request
+            return ResponseEntity.badRequest().build(); 
         }
     }
 
@@ -38,9 +38,9 @@ public class AuthRestController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
             AuthResponse response = authService.login(request);
-            return ResponseEntity.ok(response);  // 200 OK
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 401 Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -48,9 +48,9 @@ public class AuthRestController {
     public ResponseEntity<AuthResponse> loginAdmin(@Valid @RequestBody LoginRequest request) {
         try {
             AuthResponse response = authService.loginAdmin(request);
-            return ResponseEntity.ok(response);  // 200 OK
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();  // 401 Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 }

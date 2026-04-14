@@ -2,8 +2,6 @@ package com.ecommerce.backend.service;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.backend.dto.request.CartItemsRequestDTO;
@@ -14,59 +12,47 @@ import com.ecommerce.backend.repository.CartItemsRepository;
 import com.ecommerce.backend.service.interfaces.CartItemsService;
 
 @Service
-public class CartItemsServiceImpl implements CartItemsService {
+public class CartItemsServiceImpl extends BaseCrudServiceImpl<CartItems, CartItemsResponseDTO, CartItemsRequestDTO, CartItemsRequestDTO> implements CartItemsService {
 
-    private final CartItemsRepository cartItemsRepository;
     private final CartItemsMapper cartItemsMapper;
 
     public CartItemsServiceImpl(CartItemsRepository cartItemsRepository, CartItemsMapper cartItemsMapper) {
-        this.cartItemsRepository = cartItemsRepository;
+        super(cartItemsRepository);
         this.cartItemsMapper = cartItemsMapper;
     }
 
     @Override
-    public List<CartItemsResponseDTO> findAll() {
-        return cartItemsRepository.findAll().stream()
-                .map(cartItemsMapper::toCartItemsResponseDTO)
-                .toList();
+    protected CartItemsResponseDTO toDto(CartItems entity) {
+        return cartItemsMapper.toCartItemsResponseDTO(entity);
     }
 
     @Override
-    public Page<CartItemsResponseDTO> findAllPageable(Pageable pageable) {
-        return cartItemsRepository.findAll(pageable)
-                .map(cartItemsMapper::toCartItemsResponseDTO);
+    protected List<CartItemsResponseDTO> toDtoList(List<CartItems> entities) {
+        return entities.stream().map(cartItemsMapper::toCartItemsResponseDTO).toList();
     }
 
     @Override
-    public CartItemsResponseDTO findById(Long id) {
-        return cartItemsRepository.findById(id)
-                .map(cartItemsMapper::toCartItemsResponseDTO)
-                .orElseThrow(() -> new RuntimeException("CartItems not found with id: " + id));
+    protected CartItems toEntity(CartItemsRequestDTO dto) {
+        return cartItemsMapper.toEntity(dto);
     }
 
     @Override
-    public CartItemsResponseDTO createFromDto(CartItemsRequestDTO cartItemsRequestDTO) {
-        CartItems entity = new CartItems();
-        cartItemsMapper.updateEntityFromRequestDto(cartItemsRequestDTO, entity);
-        CartItems saved = cartItemsRepository.save(entity);
-        return cartItemsMapper.toCartItemsResponseDTO(saved);
+    protected void updateEntity(CartItemsRequestDTO dto, CartItems target) {
+        cartItemsMapper.updateEntityFromRequestDto(dto, target);
     }
 
     @Override
-    public CartItemsResponseDTO updateFromDto(Long id, CartItemsRequestDTO cartItemsRequestDTO) {
-        CartItems entity = cartItemsRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("CartItems not found with id: " + id));
-        cartItemsMapper.updateEntityFromRequestDto(cartItemsRequestDTO, entity);
-        CartItems saved = cartItemsRepository.save(entity);
-        return cartItemsMapper.toCartItemsResponseDTO(saved);
+    protected void updateEntityFromCreate(CartItemsRequestDTO dto, CartItems target) {
+        cartItemsMapper.updateEntityFromRequestDto(dto, target);
     }
 
     @Override
-    public void deleteById(Long id) {
-        if (!cartItemsRepository.existsById(id)) {
-            throw new RuntimeException("CartItems not found with id: " + id);
-        }
-        cartItemsRepository.deleteById(id);
+    protected CartItems newEntity() {
+        return new CartItems();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "CartItems";
     }
 }
-

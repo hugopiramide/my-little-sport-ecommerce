@@ -3,8 +3,6 @@ package com.ecommerce.backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,70 +18,71 @@ import com.ecommerce.backend.service.interfaces.OrderItemService;
 import com.ecommerce.backend.service.interfaces.ProductService;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResponseDTO, ProductRequestDTO, ProductRequestDTO> implements ProductService {
 
-    private final ProductRepository productRepository;
     private final OrderItemService orderItemService;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, OrderItemService orderItemService,
-            CategoryRepository categoryRepository, ProductMapper productMapper) {
-        this.productRepository = productRepository;
+    public ProductServiceImpl(ProductRepository productRepository, OrderItemService orderItemService, CategoryRepository categoryRepository, ProductMapper productMapper) {
+        super(productRepository);
         this.orderItemService = orderItemService;
         this.categoryRepository = categoryRepository;
         this.productMapper = productMapper;
     }
 
     @Override
-    public List<ProductResponseDTO> findAll() {
-        return productRepository.findAll().stream()
-                .map(productMapper::toProductResponseDTO)
-                .toList();
+    protected ProductResponseDTO toDto(Product entity) {
+        return productMapper.toProductResponseDTO(entity);
     }
 
     @Override
-    public Page<ProductResponseDTO> findAllPageable(Pageable pageable) {
-        return productRepository.findAll(pageable)
-                .map(productMapper::toProductResponseDTO);
+    protected List<ProductResponseDTO> toDtoList(List<Product> entities) {
+        return entities.stream().map(productMapper::toProductResponseDTO).toList();
     }
 
     @Override
-    public ProductResponseDTO findById(Long id) {
-        return productRepository.findById(id)
-                .map(productMapper::toProductResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    protected Product toEntity(ProductRequestDTO dto) {
+        return productMapper.toEntity(dto);
     }
 
     @Override
-    public ProductResponseDTO createFromDto(ProductRequestDTO productRequestDTO) {
-        Product entity = new Product();
-        productMapper.updateEntityFromRequestDto(productRequestDTO, entity);
-        Category category = categoryRepository.findById((long) productRequestDTO.category_id())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + productRequestDTO.category_id()));
+    protected void updateEntity(ProductRequestDTO dto, Product target) {
+        productMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected void updateEntityFromCreate(ProductRequestDTO dto, Product target) {
+        productMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected Product newEntity() {
+        return new Product();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "Product";
+    }
+
+    @Override
+    protected void afterCreate(ProductRequestDTO dto, Product entity) {
+        Category category = resolveCategory(dto.category_id());
         entity.setCategory(category);
-        Product savedProduct = productRepository.save(entity);
-        return productMapper.toProductResponseDTO(savedProduct);
     }
 
     @Override
-    public ProductResponseDTO updateFromDto(Long id, ProductRequestDTO productRequestDTO) {
-        Product entity = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        productMapper.updateEntityFromRequestDto(productRequestDTO, entity);
-        entity.setActive(productRequestDTO.active());
-        Category category = categoryRepository.findById((long) productRequestDTO.category_id())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + productRequestDTO.category_id()));
+    protected void afterUpdate(ProductRequestDTO dto, Product entity) {
+        entity.setActive(dto.active());
+        Category category = resolveCategory(dto.category_id());
         entity.setCategory(category);
-        Product savedProduct = productRepository.save(entity);
-        return productMapper.toProductResponseDTO(savedProduct);
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        Product product = findEntityById(id);
 
         if (product.getProductVariants() != null && !product.getProductVariants().isEmpty()) {
             List<Long> variantIds = product.getProductVariants().stream()
@@ -91,19 +90,26 @@ public class ProductServiceImpl implements ProductService {
                     .collect(Collectors.toList());
             orderItemService.clearProductVariantReferences(variantIds);
         }
-        productRepository.delete(product);
+        repository.delete(product);
     }
 
     @Override
     @Transactional
     public void nullifyCategory(Long categoryId) {
-        productRepository.nullifyCategoryByCategoryId(categoryId);
+        ((ProductRepository) repository).nullifyCategoryByCategoryId(categoryId);
     }
 
     @Override
     public List<ProductResponseDTO> searchByNameAndDescription(String query) {
-        return productRepository.findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query).stream()
+        return ((ProductRepository) repository)
+                .findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query)
+                .stream()
                 .map(productMapper::toProductResponseDTO)
                 .toList();
+    }
+
+    private Category resolveCategory(int categoryId) {
+        return categoryRepository.findById((long) categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
     }
 }

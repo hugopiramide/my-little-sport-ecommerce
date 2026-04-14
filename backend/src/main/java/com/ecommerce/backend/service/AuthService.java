@@ -28,13 +28,6 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    /**
-     * Objective: Registers a new user, encrypts the password, saves to DB, and returns a JWT.
-     *
-     * Input: request - DTO containing raw username and password.
-     * Output: AuthResponse - The generated JWT token for immediate access.
-     */
-
     @Transactional
     public AuthResponse register(RegisterRequest request) {
 
@@ -60,12 +53,6 @@ public class AuthService {
         return new AuthResponse(jwtToken);
     }
 
-    /**
-     * Objective: Authenticates credentials using Spring Security and generates a JWT.
-     *
-     * Input: request - DTO containing username and password.
-     * Output: AuthResponse - The generated JWT token if credentials are valid.
-     */
     public AuthResponse login(LoginRequest request) {
 
         Authentication authentication = authenticationManager.authenticate(

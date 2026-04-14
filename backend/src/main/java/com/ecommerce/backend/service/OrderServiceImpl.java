@@ -3,8 +3,6 @@ package com.ecommerce.backend.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.backend.dto.request.OrderRequestDTO;
@@ -15,60 +13,52 @@ import com.ecommerce.backend.repository.OrderRepository;
 import com.ecommerce.backend.service.interfaces.OrderService;
 
 @Service
-public class OrderServiceImpl implements OrderService {
+public class OrderServiceImpl extends BaseCrudServiceImpl<Order, OrderResponseDTO, OrderRequestDTO, OrderRequestDTO> implements OrderService {
 
-    private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
     public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper) {
-        this.orderRepository = orderRepository;
+        super(orderRepository);
         this.orderMapper = orderMapper;
     }
 
     @Override
-    public List<OrderResponseDTO> findAll() {
-        return orderRepository.findAll().stream()
-                .map(orderMapper::toOrderResponseDTO)
-                .toList();
+    protected OrderResponseDTO toDto(Order entity) {
+        return orderMapper.toOrderResponseDTO(entity);
     }
 
     @Override
-    public Page<OrderResponseDTO> findAllPageable(Pageable pageable) {
-        return orderRepository.findAll(pageable)
-                .map(orderMapper::toOrderResponseDTO);
+    protected List<OrderResponseDTO> toDtoList(List<Order> entities) {
+        return entities.stream().map(orderMapper::toOrderResponseDTO).toList();
     }
 
     @Override
-    public OrderResponseDTO findById(Long id) {
-        return orderRepository.findById(id)
-                .map(orderMapper::toOrderResponseDTO)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+    protected Order toEntity(OrderRequestDTO dto) {
+        return orderMapper.toEntity(dto);
     }
 
     @Override
-    public OrderResponseDTO createFromDto(OrderRequestDTO orderRequestDTO) {
-        Order entity = new Order();
-        orderMapper.updateEntityFromRequestDto(orderRequestDTO, entity);
+    protected void updateEntity(OrderRequestDTO dto, Order target) {
+        orderMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected void updateEntityFromCreate(OrderRequestDTO dto, Order target) {
+        orderMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected Order newEntity() {
+        return new Order();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "Order";
+    }
+
+    @Override
+    protected void afterCreate(OrderRequestDTO dto, Order entity) {
         entity.setOrder_date(LocalDateTime.now());
-        Order saved = orderRepository.save(entity);
-        return orderMapper.toOrderResponseDTO(saved);
-    }
-
-    @Override
-    public OrderResponseDTO updateFromDto(Long id, OrderRequestDTO orderRequestDTO) {
-        Order entity = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
-        orderMapper.updateEntityFromRequestDto(orderRequestDTO, entity);
-        Order saved = orderRepository.save(entity);
-        return orderMapper.toOrderResponseDTO(saved);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        if (!orderRepository.existsById(id)) {
-            throw new RuntimeException("Order not found with id: " + id);
-        }
-        orderRepository.deleteById(id);
     }
 }
-

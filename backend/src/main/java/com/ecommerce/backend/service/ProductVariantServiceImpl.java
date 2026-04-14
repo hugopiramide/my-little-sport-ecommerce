@@ -17,72 +17,65 @@ import com.ecommerce.backend.service.interfaces.OrderItemService;
 import com.ecommerce.backend.service.interfaces.ProductVariantService;
 
 @Service
-public class ProductVariantServiceImpl implements ProductVariantService {
+public class ProductVariantServiceImpl extends BaseCrudServiceImpl<ProductVariant, ProductVariantResponseDTO, ProductVariantRequestDTO, ProductVariantRequestDTO> implements ProductVariantService {
 
-    private final ProductVariantRepository productVariantRepository;
     private final OrderItemService orderItemService;
     private final ProductVariantMapper productVariantMapper;
 
-    public ProductVariantServiceImpl(ProductVariantRepository productVariantRepository,
-            @Lazy OrderItemService orderItemService,
-            ProductVariantMapper productVariantMapper) {
-        this.productVariantRepository = productVariantRepository;
+    public ProductVariantServiceImpl(ProductVariantRepository productVariantRepository, @Lazy OrderItemService orderItemService, ProductVariantMapper productVariantMapper) {
+        super(productVariantRepository);
         this.orderItemService = orderItemService;
         this.productVariantMapper = productVariantMapper;
     }
 
     @Override
-    public List<ProductVariantResponseDTO> findAll() {
-        return productVariantRepository.findAll().stream()
-                .map(productVariantMapper::toProductVariantResponseDTO)
-                .toList();
+    protected ProductVariantResponseDTO toDto(ProductVariant entity) {
+        return productVariantMapper.toProductVariantResponseDTO(entity);
     }
 
     @Override
-    public Page<ProductVariantResponseDTO> findAllPageable(Pageable pageable) {
-        return productVariantRepository.findAll(pageable)
-                .map(productVariantMapper::toProductVariantResponseDTO);
+    protected List<ProductVariantResponseDTO> toDtoList(List<ProductVariant> entities) {
+        return entities.stream().map(productVariantMapper::toProductVariantResponseDTO).toList();
     }
 
     @Override
-    public ProductVariantResponseDTO findById(Long id) {
-        return productVariantRepository.findById(id)
-                .map(productVariantMapper::toProductVariantResponseDTO)
-                .orElseThrow(() -> new RuntimeException("ProductVariant not found with id: " + id));
+    protected ProductVariant toEntity(ProductVariantRequestDTO dto) {
+        return productVariantMapper.toEntity(dto);
     }
 
     @Override
-    public ProductVariantResponseDTO createFromDto(ProductVariantRequestDTO productVariantRequestDTO) {
-        ProductVariant entity = new ProductVariant();
-        productVariantMapper.updateEntityFromRequestDto(productVariantRequestDTO, entity);
-        ProductVariant saved = productVariantRepository.save(entity);
-        return productVariantMapper.toProductVariantResponseDTO(saved);
+    protected void updateEntity(ProductVariantRequestDTO dto, ProductVariant target) {
+        productVariantMapper.updateEntityFromRequestDto(dto, target);
     }
 
     @Override
-    public ProductVariantResponseDTO updateFromDto(Long id, ProductVariantRequestDTO productVariantRequestDTO) {
-        ProductVariant entity = productVariantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductVariant not found with id: " + id));
-        productVariantMapper.updateEntityFromRequestDto(productVariantRequestDTO, entity);
-        ProductVariant saved = productVariantRepository.save(entity);
-        return productVariantMapper.toProductVariantResponseDTO(saved);
+    protected void updateEntityFromCreate(ProductVariantRequestDTO dto, ProductVariant target) {
+        productVariantMapper.updateEntityFromRequestDto(dto, target);
+    }
+
+    @Override
+    protected ProductVariant newEntity() {
+        return new ProductVariant();
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "ProductVariant";
     }
 
     @Override
     @Transactional
     public void deleteById(Long id) {
-        if (!productVariantRepository.existsById(id)) {
-            throw new RuntimeException("ProductVariant not found with id: " + id);
+        if (!repository.existsById(id)) {
+            throw entityNotFoundException(id);
         }
         orderItemService.clearProductVariantReference(id);
-        productVariantRepository.deleteById(id);
+        repository.deleteById(id);
     }
 
     @Override
     public ProductVariant findEntityById(Long id) {
-        return productVariantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductVariant not found with id: " + id));
+        return repository.findById(id)
+                .orElseThrow(() -> entityNotFoundException(id));
     }
 }
-
-
