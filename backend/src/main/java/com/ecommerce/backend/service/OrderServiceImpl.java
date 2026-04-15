@@ -1,5 +1,6 @@
 package com.ecommerce.backend.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import com.ecommerce.backend.dto.response.OrderResponseDTO;
 import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.model.Order;
 import com.ecommerce.backend.repository.OrderRepository;
+import com.ecommerce.backend.model.enums.OrderStatus;
 import com.ecommerce.backend.service.interfaces.OrderService;
 
 @Service
@@ -60,5 +62,21 @@ public class OrderServiceImpl extends BaseCrudServiceImpl<Order, OrderResponseDT
     @Override
     protected void afterCreate(OrderRequestDTO dto, Order entity) {
         entity.setOrder_date(LocalDateTime.now());
+    }
+
+    @Override
+    public List<OrderResponseDTO> findByFilters(String dateFrom, String dateTo, OrderStatus status) {
+        LocalDateTime normalizedDateFrom = null;
+        LocalDateTime normalizedDateTo = null;
+        
+        if (dateFrom != null && !dateFrom.isBlank()) {
+            normalizedDateFrom = LocalDate.parse(dateFrom).atStartOfDay();
+        }
+        if (dateTo != null && !dateTo.isBlank()) {
+            normalizedDateTo = LocalDate.parse(dateTo).atTime(23, 59, 59);
+        }
+        
+        List<Order> orders = ((OrderRepository) repository).findByFilters(normalizedDateFrom, normalizedDateTo, status);
+        return toDtoList(orders);
     }
 }

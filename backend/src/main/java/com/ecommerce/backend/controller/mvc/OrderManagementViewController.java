@@ -26,11 +26,31 @@ public class OrderManagementViewController extends BaseManagementController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId) {
+    public String list(Model model, 
+                       @RequestParam(required = false) Long editId,
+                       @RequestParam(required = false) String dateFrom,
+                       @RequestParam(required = false) String dateTo,
+                       @RequestParam(required = false) OrderStatus status) {
         model.addAttribute("entityName", "Orders");
         model.addAttribute("entityKey", "orders");
         model.addAttribute("editId", editId);
-        model.addAttribute("items", toMapList(orderService.findAll()));
+        
+        // Normalize empty strings to null
+        String normalizedDateFrom = (dateFrom != null && !dateFrom.isBlank()) ? dateFrom : null;
+        String normalizedDateTo = (dateTo != null && !dateTo.isBlank()) ? dateTo : null;
+        
+        boolean hasFilters = (normalizedDateFrom != null || normalizedDateTo != null || status != null);
+        
+        if (hasFilters) {
+            model.addAttribute("items", toMapList(orderService.findByFilters(normalizedDateFrom, normalizedDateTo, status)));
+            model.addAttribute("filterDateFrom", dateFrom);
+            model.addAttribute("filterDateTo", dateTo);
+            model.addAttribute("filterStatus", status);
+        } else {
+            model.addAttribute("items", toMapList(orderService.findAll()));
+        }
+        
+        model.addAttribute("allOrderStatuses", OrderStatus.values());
         return "management-list";
     }
 

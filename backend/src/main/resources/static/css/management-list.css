@@ -227,6 +227,7 @@ table tbody tr.row-editing {
 
 .filter-select {
   cursor: pointer;
+  width: 120px;
 }
 
 .filter-input::placeholder {

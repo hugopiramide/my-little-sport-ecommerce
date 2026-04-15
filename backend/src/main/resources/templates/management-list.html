@@ -57,8 +57,40 @@
             </div>
             <div class="filter-actions">
               <button type="submit" class="btn btn-search">Apply Filters</button>
-              <a th:if="${filterProductId != null or filterStockMin != null or filterStockMax != null or filterSize != null}" 
+              <a th:if="${filterProductId != null or filterStockMin != null or filterStockMax != null or filterSize != null}"
                 th:href="@{/manage/product-variants/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${entityKey == 'orders'}" class="search-container mb-4">
+        <form th:action="@{/manage/orders/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="dateFrom" class="filter-label">Date From</label>
+              <input type="date" id="dateFrom" name="dateFrom" th:value="${filterDateFrom}" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="dateTo" class="filter-label">Date To</label>
+              <input type="date" id="dateTo" name="dateTo" th:value="${filterDateTo}" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="status" class="filter-label">Status</label>
+              <select id="status" name="status" class="filter-select">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${allOrderStatuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == filterStatus}"></option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterDateFrom != null or filterDateTo != null or filterStatus != null}"
+                 th:href="@{/manage/orders/list}" class="btn-action btn-delete-btn" title="Clear filters">
                 <i class="bi bi-x-lg"></i>
               </a>
             </div>
