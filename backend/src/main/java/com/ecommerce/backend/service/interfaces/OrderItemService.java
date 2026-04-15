@@ -10,4 +10,6 @@ public interface OrderItemService extends BaseCrudService<OrderItemResponseDTO, 
     void clearProductVariantReferences(List<Long> variantIds);
 
     void clearProductVariantReference(Long variantId);
+
+    List<OrderItemResponseDTO> findByFilters(Long orderId, String productName);
 }

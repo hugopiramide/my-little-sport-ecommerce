@@ -25,11 +25,21 @@ public class OrderItemManagementViewController extends BaseManagementController 
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId) {
+    public String list(Model model,
+                       @RequestParam(required = false) Long editId,
+                       @RequestParam(required = false) Long filterOrderId,
+                       @RequestParam(required = false) String filterProductName) {
         model.addAttribute("entityName", "Order Items");
         model.addAttribute("entityKey", "order-items");
         model.addAttribute("editId", editId);
-        model.addAttribute("items", toMapList(orderItemService.findAll()));
+        model.addAttribute("filterOrderId", filterOrderId);
+        model.addAttribute("filterProductName", filterProductName);
+
+        if (filterOrderId != null || (filterProductName != null && !filterProductName.trim().isEmpty())) {
+            model.addAttribute("items", toMapList(orderItemService.findByFilters(filterOrderId, filterProductName)));
+        } else {
+            model.addAttribute("items", toMapList(orderItemService.findAll()));
+        }
         return "management-list";
     }
 

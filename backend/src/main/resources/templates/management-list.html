@@ -98,6 +98,28 @@
         </form>
       </div>
 
+      <div th:if="${entityKey == 'order-items'}" class="search-container mb-4">
+        <form th:action="@{/manage/order-items/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="filterOrderId" class="filter-label">Order ID</label>
+              <input type="number" id="filterOrderId" name="filterOrderId" th:value="${filterOrderId}" placeholder="Filter by Order ID" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="filterProductName" class="filter-label">Product Name</label>
+              <input type="text" id="filterProductName" name="filterProductName" th:value="${filterProductName}" placeholder="Filter by Product Name" class="filter-input"/>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterOrderId != null or filterProductName != null}"
+                 th:href="@{/manage/order-items/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
       <div th:if="${not #lists.isEmpty(items)}" class="table-container">
         <table th:with="keys=${items[0].keySet()}">
           <thead>

@@ -23,5 +23,8 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     @Transactional
     @Query("UPDATE OrderItem oi SET oi.productVariant = NULL WHERE oi.productVariant.id IN :variantIds")
     int clearProductVariantReferences(@Param("variantIds") List<Long> variantIds);
+
+    @Query("SELECT oi FROM OrderItem oi WHERE (:orderId IS NULL OR oi.order.id = :orderId) AND (:productName IS NULL OR LOWER(oi.productName) LIKE LOWER(CONCAT('%', :productName, '%')))")
+    List<OrderItem> findByFilters(@Param("orderId") Long orderId, @Param("productName") String productName);
 }
 

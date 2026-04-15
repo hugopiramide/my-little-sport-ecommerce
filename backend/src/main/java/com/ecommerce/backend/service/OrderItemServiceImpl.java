@@ -78,6 +78,13 @@ public class OrderItemServiceImpl extends BaseCrudServiceImpl<OrderItem, OrderIt
         ((OrderItemRepository) repository).clearProductVariantReference(variantId);
     }
 
+    @Override
+    @Transactional
+    public List<OrderItemResponseDTO> findByFilters(Long orderId, String productName) {
+        String productNameFilter = (productName != null && !productName.trim().isEmpty()) ? productName.trim() : null;
+        return toDtoList(((OrderItemRepository) repository).findByFilters(orderId, productNameFilter));
+    }
+
     private void populateSnapshotFields(OrderItem entity, Long variantId) {
         if (variantId != null) {
             ProductVariant variant = productVariantService.findEntityById(variantId);
