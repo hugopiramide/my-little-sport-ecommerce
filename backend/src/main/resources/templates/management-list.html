@@ -120,6 +120,35 @@
         </form>
       </div>
 
+      <div th:if="${entityKey == 'product-reviews'}" class="search-container mb-4">
+        <form th:action="@{/manage/product-reviews/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="filterProductId" class="filter-label">Product ID</label>
+              <input type="number" id="filterProductId" name="filterProductId" th:value="${filterProductId}" placeholder="Filter by Product ID" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="filterStatus" class="filter-label">Status</label>
+              <select id="filterStatus" name="filterStatus" class="filter-select">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${allReviewStatuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == filterStatus}"></option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterProductId != null or filterStatus != null}"
+                 th:href="@{/manage/product-reviews/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+
       <div th:if="${not #lists.isEmpty(items)}" class="table-container">
         <table th:with="keys=${items[0].keySet()}">
           <thead>
@@ -140,8 +169,13 @@
                        class="btn-action btn-edit-link" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
-                    <a th:if="${entityKey != 'product-variants'}"
+                    <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
                        th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, search=${searchQuery})}"
+                       class="btn-action btn-edit-link" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a th:if="${entityKey == 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
                        class="btn-action btn-edit-link" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
@@ -173,17 +207,30 @@
                                 th:selected="${cat.id == item.get(key)}"></option>
                       </select>
 
-                      <div th:if="${key != 'category_id' and item.get(key) instanceof T(java.lang.Boolean)}" class="checkbox-row">
+                      <select th:if="${key == 'status' and entityKey == 'product-reviews'}" 
+                              th:name="${key}" th:form="'form-' + ${item.id}" class="select-edit">
+                        <option th:each="s : ${allReviewStatuses}" 
+                                th:value="${s}" 
+                                th:text="${s}"
+                                th:selected="${s == item.get(key)}"></option>
+                      </select>
+
+                      <div th:if="${key != 'category_id' and key != 'status' and item.get(key) instanceof T(java.lang.Boolean) and entityKey != 'product-reviews'}" class="checkbox-row">
                         <input type="checkbox" th:name="${key}" value="true"
                               th:form="'form-' + ${item.id}" th:checked="${item.get(key)}"/>
                         <input type="hidden" th:name="'_' + ${key}" value="on" th:form="'form-' + ${item.id}"/>
                       </div>
+
+                      <th:block th:if="${entityKey == 'product-reviews' and key != 'status'}">
+                        <span th:text="${item.get(key)}"></span>
+                        <input type="hidden" th:name="${key}" th:value="${item.get(key)}" th:form="'form-' + ${item.id}"/>
+                      </th:block>
                       
-                      <input th:if="${key != 'category_id' and item.get(key) instanceof T(java.lang.Number) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
+                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and item.get(key) instanceof T(java.lang.Number) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
                             type="number" step="any" th:name="${key}" th:value="${item.get(key)}"
                             th:form="'form-' + ${item.id}"/>
                       
-                      <input th:if="${key != 'category_id' and !(item.get(key) instanceof T(java.lang.Number)) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
+                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and !(item.get(key) instanceof T(java.lang.Number)) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
                             type="text" th:name="${key}" th:value="${item.get(key)}"
                             th:form="'form-' + ${item.id}"/>
                   </th:block>
@@ -198,8 +245,13 @@
                        class="btn-action btn-cancel" title="Cancel">
                       <i class="bi bi-x-lg"></i>
                     </a>
-                    <a th:if="${entityKey != 'product-variants'}"
+                    <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
                        th:href="@{/manage/{e}/list(e=${entityKey}, search=${searchQuery})}"
+                       class="btn-action btn-cancel" title="Cancel">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                    <a th:if="${entityKey == 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
                        class="btn-action btn-cancel" title="Cancel">
                       <i class="bi bi-x-lg"></i>
                     </a>

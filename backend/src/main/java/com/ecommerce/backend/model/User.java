@@ -58,6 +58,12 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<UserFavorite> userFavorites;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "user")
+    private List<ProductReview> productReviews;
+
     @Embedded
     private PersonalData personalData;
 

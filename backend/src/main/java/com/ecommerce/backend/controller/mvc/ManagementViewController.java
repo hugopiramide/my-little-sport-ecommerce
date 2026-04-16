@@ -31,6 +31,7 @@ public class ManagementViewController {
                 new EntityMenuItem("orders", "Order", "/api/orders"),
                 new EntityMenuItem("order-items", "OrderItem", "/api/order-items"),
                 new EntityMenuItem("user-favorites", "UserFavorite", "/api/user-favorites"),
+                new EntityMenuItem("product-reviews", "ProductReview", "/api/reviews"),
                 new EntityMenuItem("users", "Users", "/manage/users/search")
         );
     }

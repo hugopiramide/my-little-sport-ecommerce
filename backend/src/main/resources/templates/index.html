@@ -55,7 +55,7 @@
               <a th:href="@{/manage/{entity}/list(entity=${entity.key})}" class="btn entity-list-btn">List <span th:text="${entity.title}"></span></a>
             </section>
 
-            <section class="op-box" th:if="${entity.key != 'orders' and entity.key != 'order-items' and entity.key != 'user-favorites' and entity.key != 'carts' and entity.key != 'cart-items'}">
+            <section class="op-box" th:if="${entity.key != 'orders' and entity.key != 'order-items' and entity.key != 'user-favorites' and entity.key != 'carts' and entity.key != 'cart-items' and entity.key != 'product-reviews'}">
               <h3>CREATE</h3>
               <form method="post" th:action="@{/manage/{entity}/create(entity=${entity.key})}">
                 <th:block th:switch="${entity.key}">

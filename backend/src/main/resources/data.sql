@@ -325,3 +325,13 @@ INSERT INTO `user_favorites` (`user_id`, `product_id`, `notify_when_in_stock`) V
 -- sergioro (14)
 (14, 8,  0),
 (14, 3,  1);
+
+-- ============================================================
+-- PRODUCT REVIEWS (Datos de prueba para endpoints)
+-- ============================================================
+INSERT INTO `product_review` (`user_id`, `product_id`, `order_id`, `title`, `body`, `rating`, `status`, `created_at`) VALUES
+  (2, 1, 1, 'Excelentes zapatillas', 'Muy cómodas para correr maratones. El agarre es increíble.', 5, 'APPROVED', NOW()),
+  (3, 1, 4, 'Buenas pero caras', 'La amortiguación es genial, pero el precio es un poco elevado.', 4, 'APPROVED', NOW()),
+  (6, 15, 11, 'Imprescindibles para trail', 'Resistentes y totalmente impermeables. Las mejores que he tenido.', 5, 'APPROVED', NOW()),
+  (9, 5, 17, 'Normalitas', 'Esperaba más durabilidad para crossfit.', 3, 'PENDING',  NOW());
+

@@ -55,4 +55,10 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserFavorite> userFavorites;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "product")
+    private List<ProductReview> productReviews;
+
 }

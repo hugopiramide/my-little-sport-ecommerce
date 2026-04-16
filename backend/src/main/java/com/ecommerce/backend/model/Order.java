@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,4 +56,10 @@ public class Order {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "order", orphanRemoval = true)
     private List<OrderItem> orderItems;
+
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToOne(mappedBy = "order")
+    private ProductReview productReview;
 }
