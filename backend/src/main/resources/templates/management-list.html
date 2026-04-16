@@ -1,0 +1,272 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:text="'List of ' + ${entityName}">List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" href="/css/management-list.css"/>
+</head>
+<body>
+  <div class="management-layout">
+    <header class="header">
+      <h1 class="title in-line-block" th:text="'Manage ' + ${entityName}">List</h1>
+      <a href="/" class="btn alt">Back to dashboard</a>
+    </header>
+
+    <main class="container-fluid management-main" th:with="isReadOnly=${entityKey == 'orders' or entityKey == 'order-items' or entityKey == 'user-favorites' or entityKey == 'carts' or entityKey == 'cart-items'}">
+      
+      <div th:if="${entityKey == 'products'}" class="search-container mb-4">
+        <form th:action="@{/manage/products/list}" method="get" class="search-form">
+          <div class="search-input-wrapper">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" name="search" th:value="${searchQuery}" placeholder="Search products by name or description..." class="search-input"/>
+            <button type="submit" class="btn btn-search">Search</button>
+            <a th:if="${searchQuery != null}" th:href="@{/manage/products/list}" class="btn-action btn-delete-btn" title="Clear search">
+              <i class="bi bi-x-lg"></i>
+            </a>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${entityKey == 'product-variants'}" class="search-container mb-4">
+        <form th:action="@{/manage/product-variants/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="productId" class="filter-label">Product</label>
+              <select id="productId" name="productId" class="filter-select">
+                <option value="">All Products</option>
+                <option th:each="prod : ${allProducts}"
+                        th:value="${prod.id}"
+                        th:text="${prod.name}"
+                        th:selected="${prod.id == filterProductId}"></option>
+              </select>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="stockMin" class="filter-label">Stock Min</label>
+              <input type="number" id="stockMin" name="stockMin" th:value="${filterStockMin}" placeholder="Min" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="stockMax" class="filter-label">Stock Max</label>
+              <input type="number" id="stockMax" name="stockMax" th:value="${filterStockMax}" placeholder="Max" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="size" class="filter-label">Size</label>
+              <input type="text" id="size" name="size" th:value="${filterSize}" placeholder="e.g., M, L, XL" class="filter-input"/>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterProductId != null or filterStockMin != null or filterStockMax != null or filterSize != null}"
+                th:href="@{/manage/product-variants/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${entityKey == 'orders'}" class="search-container mb-4">
+        <form th:action="@{/manage/orders/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="dateFrom" class="filter-label">Date From</label>
+              <input type="date" id="dateFrom" name="dateFrom" th:value="${filterDateFrom}" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="dateTo" class="filter-label">Date To</label>
+              <input type="date" id="dateTo" name="dateTo" th:value="${filterDateTo}" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="status" class="filter-label">Status</label>
+              <select id="status" name="status" class="filter-select">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${allOrderStatuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == filterStatus}"></option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterDateFrom != null or filterDateTo != null or filterStatus != null}"
+                 th:href="@{/manage/orders/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${entityKey == 'order-items'}" class="search-container mb-4">
+        <form th:action="@{/manage/order-items/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="filterOrderId" class="filter-label">Order ID</label>
+              <input type="number" id="filterOrderId" name="filterOrderId" th:value="${filterOrderId}" placeholder="Filter by Order ID" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="filterProductName" class="filter-label">Product Name</label>
+              <input type="text" id="filterProductName" name="filterProductName" th:value="${filterProductName}" placeholder="Filter by Product Name" class="filter-input"/>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterOrderId != null or filterProductName != null}"
+                 th:href="@{/manage/order-items/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div th:if="${entityKey == 'product-reviews'}" class="search-container mb-4">
+        <form th:action="@{/manage/product-reviews/list}" method="get" class="search-form">
+          <div class="filter-form-grid">
+            <div class="filter-input-wrapper">
+              <label for="filterProductId" class="filter-label">Product ID</label>
+              <input type="number" id="filterProductId" name="filterProductId" th:value="${filterProductId}" placeholder="Filter by Product ID" class="filter-input"/>
+            </div>
+            <div class="filter-input-wrapper">
+              <label for="filterStatus" class="filter-label">Status</label>
+              <select id="filterStatus" name="filterStatus" class="filter-select">
+                <option value="">All Statuses</option>
+                <option th:each="s : ${allReviewStatuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == filterStatus}"></option>
+              </select>
+            </div>
+            <div class="filter-actions">
+              <button type="submit" class="btn btn-search">Apply Filters</button>
+              <a th:if="${filterProductId != null or filterStatus != null}"
+                 th:href="@{/manage/product-reviews/list}" class="btn-action btn-delete-btn" title="Clear filters">
+                <i class="bi bi-x-lg"></i>
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+
+      <div th:if="${not #lists.isEmpty(items)}" class="table-container">
+        <table th:with="keys=${items[0].keySet()}">
+          <thead>
+            <tr>
+              <th th:each="key : ${keys}" th:text="${key}">Key</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="item : ${items}" th:class="${editId == item.id} ? 'row-editing' : 'row-normal'">
+              
+              <th:block th:if="${editId != item.id}">
+                <td th:each="key : ${keys}" th:text="${item.get(key)}"></td>
+                <td class="table-action-cell">
+                  <div th:if="${!isReadOnly}" class="actions-row">
+                    <a th:if="${entityKey == 'product-variants'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, size=${filterSize})}"
+                       class="btn-action btn-edit-link" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, search=${searchQuery})}"
+                       class="btn-action btn-edit-link" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a th:if="${entityKey == 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
+                       class="btn-action btn-edit-link" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <form method="post" th:action="@{/manage/{e}/delete(e=${entityKey})}" onsubmit="return confirm('Are you sure you want to delete?');">
+                      <input type="hidden" name="id" th:value="${item.id}"/>
+                      <button type="submit" class="btn-action btn-delete-btn" title="Delete">
+                        <i class="bi bi-x-lg"></i>
+                      </button>
+                    </form>
+                  </div>
+                  <span th:if="${isReadOnly}" class="text-muted readonly-text">Read-only</span>
+                </td>
+              </th:block>
+              
+              <th:block th:if="${editId == item.id and !isReadOnly}">
+                <td th:each="key : ${keys}">
+                  <form th:if="${key == 'id'}" th:id="'form-' + ${item.id}"
+                        th:action="@{/manage/{e}/update(e=${entityKey})}" method="post" class="hidden-form"></form>
+
+                  <span th:if="${key == 'id'}" th:text="${item.id}"></span>
+                  <input th:if="${key == 'id'}" type="hidden" name="id" th:value="${item.id}" th:form="'form-' + ${item.id}"/>
+
+                  <th:block th:if="${key != 'id'}">
+                      <select th:if="${key == 'category_id' and allCategories != null}" 
+                              th:name="${key}" th:form="'form-' + ${item.id}" class="select-edit">
+                        <option th:each="cat : ${allCategories}" 
+                                th:value="${cat.id}" 
+                                th:text="${cat.id + ' - ' + cat.name}"
+                                th:selected="${cat.id == item.get(key)}"></option>
+                      </select>
+
+                      <select th:if="${key == 'status' and entityKey == 'product-reviews'}" 
+                              th:name="${key}" th:form="'form-' + ${item.id}" class="select-edit">
+                        <option th:each="s : ${allReviewStatuses}" 
+                                th:value="${s}" 
+                                th:text="${s}"
+                                th:selected="${s == item.get(key)}"></option>
+                      </select>
+
+                      <div th:if="${key != 'category_id' and key != 'status' and item.get(key) instanceof T(java.lang.Boolean) and entityKey != 'product-reviews'}" class="checkbox-row">
+                        <input type="checkbox" th:name="${key}" value="true"
+                              th:form="'form-' + ${item.id}" th:checked="${item.get(key)}"/>
+                        <input type="hidden" th:name="'_' + ${key}" value="on" th:form="'form-' + ${item.id}"/>
+                      </div>
+
+                      <th:block th:if="${entityKey == 'product-reviews' and key != 'status'}">
+                        <span th:text="${item.get(key)}"></span>
+                        <input type="hidden" th:name="${key}" th:value="${item.get(key)}" th:form="'form-' + ${item.id}"/>
+                      </th:block>
+                      
+                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and item.get(key) instanceof T(java.lang.Number) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
+                            type="number" step="any" th:name="${key}" th:value="${item.get(key)}"
+                            th:form="'form-' + ${item.id}"/>
+                      
+                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and !(item.get(key) instanceof T(java.lang.Number)) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
+                            type="text" th:name="${key}" th:value="${item.get(key)}"
+                            th:form="'form-' + ${item.id}"/>
+                  </th:block>
+                </td>
+                <td class="table-action-cell">
+                  <div class="actions-row">
+                    <button type="submit" th:form="'form-' + ${item.id}" class="btn-action btn-save" title="Save">
+                      <i class="bi bi-check-circle"></i>
+                    </button>
+                    <a th:if="${entityKey == 'product-variants'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, size=${filterSize})}"
+                       class="btn-action btn-cancel" title="Cancel">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                    <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, search=${searchQuery})}"
+                       class="btn-action btn-cancel" title="Cancel">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                    <a th:if="${entityKey == 'product-reviews'}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
+                       class="btn-action btn-cancel" title="Cancel">
+                      <i class="bi bi-x-lg"></i>
+                    </a>
+                  </div>
+                </td>
+              </th:block>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div th:if="${#lists.isEmpty(items)}">
+        <p th:if="${searchQuery == null}">No items to display.</p>
+        <p th:if="${searchQuery != null}">No products found matching "<span th:text="${searchQuery}"></span>".</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
