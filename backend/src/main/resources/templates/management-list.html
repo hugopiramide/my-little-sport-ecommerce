@@ -153,7 +153,7 @@
         <table th:with="keys=${items[0].keySet()}">
           <thead>
             <tr>
-              <th th:each="key : ${keys}" th:text="${key}">Key</th>
+              <th th:each="key : ${keys}" th:text="${key == 'shippingAddress' ? 'Shipping Address' : key}">Key</th>
               <th class="actions-column">Actions</th>
             </tr>
           </thead>
@@ -161,7 +161,12 @@
             <tr th:each="item : ${items}" th:class="${editId == item.id} ? 'row-editing' : 'row-normal'">
               
               <th:block th:if="${editId != item.id}">
-                <td th:each="key : ${keys}" th:text="${item.get(key)}"></td>
+                <td th:each="key : ${keys}">
+                  <span th:if="${key != 'shippingAddress'}" th:text="${item.get(key)}"></span>
+                  <span th:if="${key == 'shippingAddress' and item.get(key) != null}" 
+                        th:text="${item.get(key).recipientName + ' - ' + item.get(key).street + ', ' + item.get(key).city}">
+                  </span>
+                </td>
                 <td class="table-action-cell">
                   <div th:if="${!isReadOnly}" class="actions-row">
                     <a th:if="${entityKey == 'product-variants'}"
@@ -230,8 +235,12 @@
                             type="number" step="any" th:name="${key}" th:value="${item.get(key)}"
                             th:form="'form-' + ${item.id}"/>
                       
-                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and !(item.get(key) instanceof T(java.lang.Number)) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
+                      <input th:if="${entityKey != 'product-reviews' and key != 'category_id' and key != 'shippingAddress' and !(item.get(key) instanceof T(java.lang.Number)) and !(item.get(key) instanceof T(java.lang.Boolean))}" 
                             type="text" th:name="${key}" th:value="${item.get(key)}"
+                            th:form="'form-' + ${item.id}"/>
+                      
+                      <input th:if="${key == 'shippingAddress'}" 
+                            type="text" name="shipping_addres" th:value="${item.get(key) != null ? item.get(key).street : ''}"
                             th:form="'form-' + ${item.id}"/>
                   </th:block>
                 </td>

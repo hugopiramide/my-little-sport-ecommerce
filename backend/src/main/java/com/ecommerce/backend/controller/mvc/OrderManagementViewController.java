@@ -1,5 +1,6 @@
 package com.ecommerce.backend.controller.mvc;
 
+import com.ecommerce.backend.dto.ShippingAddressDTO;
 import com.ecommerce.backend.dto.request.OrderRequestDTO;
 import com.ecommerce.backend.model.enums.OrderStatus;
 import com.ecommerce.backend.service.interfaces.OrderService;
@@ -61,7 +62,9 @@ public class OrderManagementViewController extends BaseManagementController {
                     requiredLong(formData, "user_id"),
                     parseStatus(formData),
                     requiredDouble(formData, "total_price"),
-                    requiredText(formData, "shipping_addres")
+                    new ShippingAddressDTO(
+                        null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
+                    )
             );
             Object result = orderService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");
@@ -82,7 +85,9 @@ public class OrderManagementViewController extends BaseManagementController {
                     requiredLong(formData, "user_id"),
                     parseStatus(formData),
                     requiredDouble(formData, "total_price"),
-                    requiredText(formData, "shipping_addres")
+                    new ShippingAddressDTO(
+                        null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
+                    )
             );
             Object result = orderService.updateFromDto(id, dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");

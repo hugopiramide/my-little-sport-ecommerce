@@ -17,6 +17,7 @@ import com.ecommerce.backend.model.enums.Role;
 import com.ecommerce.backend.model.vo.Birthday;
 import com.ecommerce.backend.model.vo.Password;
 import com.ecommerce.backend.model.vo.PersonalData;
+import com.ecommerce.backend.model.vo.ShippingAddress;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -69,6 +70,9 @@ public class User implements UserDetails{
 
     @Embedded
     private Password password;
+
+    @Embedded
+    private ShippingAddress shippingAddress;
 
     @Enumerated(EnumType.STRING)
     private Role role;

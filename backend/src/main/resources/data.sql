@@ -156,46 +156,46 @@ INSERT INTO `product_variant` (`product_id`, `size`, `stock`, `price_modifier`) 
 -- ============================================================
 -- PEDIDOS (25 pedidos con distintos estados y usuarios)
 -- ============================================================
-INSERT INTO `orders` (`user_id`, `order_date`, `status`, `total_price`, `shipping_addres`) VALUES
+INSERT INTO `orders` (`user_id`, `order_date`, `status`, `total_price`, `recipient_name`, `company_name`, `street`, `address_line2`, `city`, `state`, `postal_code`, `country_code`, `phone_number`, `delivery_instructions`) VALUES
 -- hugo (user 2)
-(2,  '2024-01-15 10:30:00', 'ENTREGADO',  129.99, 'Calle Falsa 123, Madrid'),
-(2,  '2024-03-20 14:15:00', 'PROCESANDO', 195.50, 'Avenida Siempre Viva 742, Barcelona'),
-(2,  '2024-02-28 09:45:00', 'ENVIADO',    150.00, 'Calle Gran Vía 10, Madrid'),
+(2,  '2024-01-15 10:30:00', 'ENTREGADO',  129.99, 'Hugo Piramide', NULL, 'Calle Falsa 123, Madrid', NULL, 'Madrid', 'Madrid', '28001', 'ES', '666555444', 'Entregar en portería'),
+(2,  '2024-03-20 14:15:00', 'PROCESANDO', 195.50, 'Hugo Piramide', NULL, 'Avenida Siempre Viva 742, Barcelona', NULL, 'Barcelona', 'Barcelona', '08001', 'ES', '666555444', NULL),
+(2,  '2024-02-28 09:45:00', 'ENVIADO',    150.00, 'Hugo Piramide', NULL, 'Calle Gran Vía 10, Madrid', NULL, 'Madrid', 'Madrid', '28001', 'ES', '666555444', NULL),
 -- mgarcia (user 3)
-(3,  '2024-01-08 11:20:00', 'ENTREGADO',  264.99, 'Paseo de la Castellana 88, Madrid'),
-(3,  '2024-01-22 15:50:00', 'CANCELADO',   85.50, 'Calle Serrano 45, Madrid'),
+(3,  '2024-01-08 11:20:00', 'ENTREGADO',  264.99, 'María García', NULL, 'Paseo de la Castellana 88, Madrid', NULL, 'Madrid', 'Madrid', '28001', 'ES', '666111222', NULL),
+(3,  '2024-01-22 15:50:00', 'CANCELADO',   85.50, 'María García', NULL, 'Calle Serrano 45, Madrid', NULL, 'Madrid', 'Madrid', '28001', 'ES', '666111222', NULL),
 -- carlosmtz (user 4)
-(4,  '2024-02-05 13:30:00', 'ENTREGADO',  220.00, 'Avenida Diagonal 350, Barcelona'),
-(4,  '2024-03-18 10:00:00', 'PROCESANDO', 145.00, 'Carrer de Balmes 78, Barcelona'),
+(4,  '2024-02-05 13:30:00', 'ENTREGADO',  220.00, 'Carlos Martínez', NULL, 'Avenida Diagonal 350, Barcelona', NULL, 'Barcelona', 'Barcelona', '08001', 'ES', '666222333', NULL),
+(4,  '2024-03-18 10:00:00', 'PROCESANDO', 145.00, 'Carlos Martínez', NULL, 'Carrer de Balmes 78, Barcelona', NULL, 'Barcelona', 'Barcelona', '08001', 'ES', '666222333', NULL),
 -- laural (user 5)
-(5,  '2024-02-14 16:45:00', 'ENVIADO',    179.98, 'Plaza Mayor 1, Salamanca'),
-(5,  '2024-01-30 12:15:00', 'ENTREGADO',   99.99, 'Calle Rúa 5, Santiago de Compostela'),
+(5,  '2024-02-14 16:45:00', 'ENVIADO',    179.98, 'Laura López', NULL, 'Plaza Mayor 1, Salamanca', NULL, 'Salamanca', 'Salamanca', '37001', 'ES', '666333444', NULL),
+(5,  '2024-01-30 12:15:00', 'ENTREGADO',   99.99, 'Laura López', NULL, 'Calle Rúa 5, Santiago de Compostela', NULL, 'Santiago', 'Galicia', '15701', 'ES', '666333444', NULL),
 -- andres (user 6)
-(6,  '2024-03-22 09:30:00', 'PROCESANDO', 310.00, 'Gran Vía 1, Bilbao'),
-(6,  '2024-02-10 14:20:00', 'ENTREGADO',  159.99, 'Calle Ercilla 14, Bilbao'),
+(6,  '2024-03-22 09:30:00', 'PROCESANDO', 310.00, 'Andrés Sánchez', NULL, 'Gran Vía 1, Bilbao', NULL, 'Bilbao', 'Vizcaya', '48001', 'ES', '666444555', NULL),
+(6,  '2024-02-10 14:20:00', 'ENTREGADO',  159.99, 'Andrés Sánchez', NULL, 'Calle Ercilla 14, Bilbao', NULL, 'Bilbao', 'Vizcaya', '48001', 'ES', '666444555', NULL),
 -- sofiaf (user 7)
-(7,  '2024-02-25 11:10:00', 'ENVIADO',    169.99, 'Calle Colón 20, Valencia'),
-(7,  '2024-01-20 15:40:00', 'ENTREGADO',  105.50, 'Avenida del Puerto 33, Valencia'),
+(7,  '2024-02-25 11:10:00', 'ENVIADO',    169.99, 'Sofía Fernández', NULL, 'Calle Colón 20, Valencia', NULL, 'Valencia', 'Valencia', '46001', 'ES', '666555666', NULL),
+(7,  '2024-01-20 15:40:00', 'ENTREGADO',  105.50, 'Sofía Fernández', NULL, 'Avenida del Puerto 33, Valencia', NULL, 'Valencia', 'Valencia', '46001', 'ES', '666555666', NULL),
 -- pabloruiz (user 8)
-(8,  '2024-01-12 10:05:00', 'CANCELADO',  139.00, 'Calle Larios 7, Málaga'),
-(8,  '2024-02-20 13:25:00', 'ENTREGADO',  240.00, 'Paseo del Parque 2, Málaga'),
+(8,  '2024-01-12 10:05:00', 'CANCELADO',  139.00, 'Pablo Ruiz', NULL, 'Calle Larios 7, Málaga', NULL, 'Málaga', 'Málaga', '29001', 'ES', '666777888', NULL),
+(8,  '2024-02-20 13:25:00', 'ENTREGADO',  240.00, 'Pablo Ruiz', NULL, 'Paseo del Parque 2, Málaga', NULL, 'Málaga', 'Málaga', '29001', 'ES', '666777888', NULL),
 -- elenat (user 9)
-(9,  '2024-03-19 08:50:00', 'PROCESANDO', 89.00,  'Calle Real 11, Valladolid'),
-(9,  '2024-02-03 12:35:00', 'ENTREGADO',  215.50, 'Paseo de Zorrilla 90, Valladolid'),
+(9,  '2024-03-19 08:50:00', 'PROCESANDO', 89.00,  'Elena Torres', NULL, 'Calle Real 11, Valladolid', NULL, 'Valladolid', 'Castilla y León', '47001', 'ES', '666888999', NULL),
+(9,  '2024-02-03 12:35:00', 'ENTREGADO',  215.50, 'Elena Torres', NULL, 'Paseo de Zorrilla 90, Valladolid', NULL, 'Valladolid', 'Castilla y León', '47001', 'ES', '666888999', NULL),
 -- diegor (user 10)
-(10, '2024-03-05 14:15:00', 'ENVIADO',    274.99, 'Calle Alfonso I 20, Zaragoza'),
-(10, '2024-01-25 10:40:00', 'ENTREGADO',  120.00, 'Paseo de la Independencia 5, Zaragoza'),
+(10, '2024-03-05 14:15:00', 'ENVIADO',    274.99, 'Diego Ramírez', NULL, 'Calle Alfonso I 20, Zaragoza', NULL, 'Zaragoza', 'Zaragoza', '50001', 'ES', '666999000', NULL),
+(10, '2024-01-25 10:40:00', 'ENTREGADO',  120.00, 'Diego Ramírez', NULL, 'Paseo de la Independencia 5, Zaragoza', NULL, 'Zaragoza', 'Zaragoza', '50001', 'ES', '666999000', NULL),
 -- vale (user 11)
-(11, '2024-02-12 16:20:00', 'ENTREGADO',  184.99, 'Calle Tetuán 8, Sevilla'),
-(11, '2024-03-17 11:55:00', 'PROCESANDO', 145.00, 'Avenida de la Constitución 1, Sevilla'),
+(11, '2024-02-12 16:20:00', 'ENTREGADO',  184.99, 'Valentina Moreno', NULL, 'Calle Tetuán 8, Sevilla', NULL, 'Sevilla', 'Sevilla', '41001', 'ES', '666000111', NULL),
+(11, '2024-03-17 11:55:00', 'PROCESANDO', 145.00, 'Valentina Moreno', NULL, 'Avenida de la Constitución 1, Sevilla', NULL, 'Sevilla', 'Sevilla', '41001', 'ES', '666000111', NULL),
 -- javierjm (user 12)
-(12, '2024-01-18 09:30:00', 'ENTREGADO',  299.99, 'Passeig de Gràcia 100, Barcelona'),
+(12, '2024-01-18 09:30:00', 'ENTREGADO',  299.99, 'Javier Jiménez', NULL, 'Passeig de Gràcia 100, Barcelona', NULL, 'Barcelona', 'Barcelona', '08001', 'ES', '666111000', NULL),
 -- camilaa (user 13)
-(13, '2024-03-10 13:45:00', 'ENVIADO',    110.00, 'Calle Preciados 3, Madrid'),
+(13, '2024-03-10 13:45:00', 'ENVIADO',    110.00, 'Camila Álvarez', NULL, 'Calle Preciados 3, Madrid', NULL, 'Madrid', 'Madrid', '28001', 'ES', '666222000', NULL),
 -- sergioro (user 14)
-(14, '2024-02-07 15:10:00', 'ENTREGADO',  175.50, 'Gran Vía de Colón 10, Granada'),
+(14, '2024-02-07 15:10:00', 'ENTREGADO',  175.50, 'Sergio Romero', NULL, 'Gran Vía de Colón 10, Granada', NULL, 'Granada', 'Granada', '18001', 'ES', '666333000', NULL),
 -- miguelh (user 16)
-(16, '2024-03-21 10:25:00', 'PROCESANDO', 259.99, 'Calle Marqués de Larios 1, Málaga');
+(16, '2024-03-21 10:25:00', 'PROCESANDO', 259.99, 'Miguel Herrera', NULL, 'Calle Marqués de Larios 1, Málaga', NULL, 'Málaga', 'Málaga', '29001', 'ES', '666444000', NULL);
 
 -- ============================================================
 -- ORDER ITEMS

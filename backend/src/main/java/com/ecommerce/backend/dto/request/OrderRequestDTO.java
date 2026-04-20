@@ -1,9 +1,8 @@
 package com.ecommerce.backend.dto.request;
 
+import com.ecommerce.backend.dto.ShippingAddressDTO;
 import com.ecommerce.backend.model.enums.OrderStatus;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 public record OrderRequestDTO(
 
@@ -15,8 +14,7 @@ public record OrderRequestDTO(
 
     double total_price,
 
-    @NotBlank(message = "Shipping address is required")
-    @Size(max = 255, message = "Shipping address must be at most 255 characters")
-    String shipping_addres
+    @NotNull(message = "Shipping address is required")
+    ShippingAddressDTO shippingAddress
 
 ) {}
