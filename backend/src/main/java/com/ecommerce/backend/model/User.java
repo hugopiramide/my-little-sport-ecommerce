@@ -1,5 +1,6 @@
 package com.ecommerce.backend.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +19,8 @@ import com.ecommerce.backend.model.vo.Birthday;
 import com.ecommerce.backend.model.vo.Password;
 import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.model.vo.ShippingAddress;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,6 +32,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.ecommerce.backend.model.converter.ShippingAddressListConverter;
 
 @Entity
 @Table(name = "user")
@@ -71,8 +74,9 @@ public class User implements UserDetails{
     @Embedded
     private Password password;
 
-    @Embedded
-    private ShippingAddress shippingAddress;
+    @Convert(converter = ShippingAddressListConverter.class)
+    @Column(name = "shipping_addresses")
+    private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role role;
