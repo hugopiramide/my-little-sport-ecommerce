@@ -2,20 +2,24 @@ package com.ecommerce.backend.config;
 
 import com.paypal.core.PayPalEnvironment;
 import com.paypal.core.PayPalHttpClient;
-import org.springframework.beans.factory.annotation.Value;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix = "app.paypal")
+@Getter
+@Setter
 public class PayPalConfig {
 
-    @Value("${paypal.client.id}")
     private String clientId;
 
-    @Value("${paypal.client.secret}")
     private String clientSecret;
 
-    @Value("${paypal.mode:sandbox}")
     private String mode;
 
     @Bean
