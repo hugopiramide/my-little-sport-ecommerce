@@ -2,7 +2,7 @@ package com.ecommerce.backend.dto.response;
 
 public record ProductVariantResponseDTO(
     Long id,
-    Long productId,
+    ProductResponseDTO product,
     String size,
     Long stock,
     double priceModifier

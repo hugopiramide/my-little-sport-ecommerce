@@ -8,11 +8,10 @@ import com.ecommerce.backend.dto.request.CartItemsRequestDTO;
 import com.ecommerce.backend.dto.response.CartItemsResponseDTO;
 import com.ecommerce.backend.model.CartItems;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { ProductVariantMapper.class })
 public interface CartItemsMapper {
 
     @Mapping(source = "cart.id", target = "cartId")
-    @Mapping(source = "productVariant.id", target = "productVariantId")
     CartItemsResponseDTO toCartItemsResponseDTO(CartItems cartItems);
 
     @Mapping(target = "id", ignore = true)

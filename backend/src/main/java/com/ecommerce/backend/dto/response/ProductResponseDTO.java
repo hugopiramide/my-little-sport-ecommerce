@@ -16,6 +16,6 @@ public record ProductResponseDTO(
 
     boolean active,
 
-    @JsonProperty("category_id")
-    Long categoryId
+    @JsonProperty("categoryName")
+    String categoryName
 ) {}

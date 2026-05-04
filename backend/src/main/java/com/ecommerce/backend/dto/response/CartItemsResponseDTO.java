@@ -3,7 +3,7 @@ package com.ecommerce.backend.dto.response;
 public record CartItemsResponseDTO(
     Long id,
     Long cartId,
-    Long productVariantId,
+    ProductVariantResponseDTO productVariantId,
     Long quantity
 ) {}
 

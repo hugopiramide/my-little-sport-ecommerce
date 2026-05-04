@@ -8,10 +8,9 @@ import com.ecommerce.backend.dto.request.ProductVariantRequestDTO;
 import com.ecommerce.backend.dto.response.ProductVariantResponseDTO;
 import com.ecommerce.backend.model.ProductVariant;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { ProductMapper.class })
 public interface ProductVariantMapper {
-
-    @Mapping(source = "product.id", target = "productId")
+    
     ProductVariantResponseDTO toProductVariantResponseDTO(ProductVariant productVariant);
 
     @Mapping(target = "id", ignore = true)
