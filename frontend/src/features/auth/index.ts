@@ -1,0 +1,6 @@
+export { authService } from './services/AuthService'
+export { default as LogIn } from './pages/LogIn'
+export { default as Register } from './pages/Register'
+export { default as ProtectedRoute } from './components/ProtectedRoute'
+export { default as AuthModal } from './components/ModalAuth'
+export * from './utils/authUtils'
