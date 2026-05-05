@@ -108,7 +108,7 @@ public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResp
     }
 
     @Override
-    public List<ProductResponseDTO> searchByNameAndDescription(String query) {
+    public List<ProductResponseDTO> searchByNameDescription(String query) {
         return ((ProductRepository) repository)
                 .findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query)
                 .stream()

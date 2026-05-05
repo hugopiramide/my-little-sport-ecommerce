@@ -38,4 +38,8 @@ public class ProductController extends BaseRestController<ProductResponseDTO, Pr
         Page<ProductResponseDTO> page = productService.searchFiltered(query, category, priceOrder, pageable);
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(page));
     }
+    @GetMapping("/search-simple")
+    public ResponseEntity<List<ProductResponseDTO>> searchByNameDescription(@RequestParam String query) {
+        return ResponseEntity.ok(productService.searchByNameDescription(query));
+    }
 }

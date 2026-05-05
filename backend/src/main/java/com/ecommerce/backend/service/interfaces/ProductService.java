@@ -11,7 +11,7 @@ public interface ProductService extends BaseCrudService<ProductResponseDTO, Prod
 
     void nullifyCategory(Long categoryId);
 
-    List<ProductResponseDTO> searchByNameAndDescription(String query);
+    List<ProductResponseDTO> searchByNameDescription(String query);
 
     Page<ProductResponseDTO> searchFiltered(String query, String category, String priceOrder, Pageable pageable);
 }

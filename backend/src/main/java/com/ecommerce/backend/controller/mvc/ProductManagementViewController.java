@@ -35,7 +35,7 @@ public class ProductManagementViewController extends BaseManagementController {
         model.addAttribute("editId", editId);
         
         if (search != null && !search.isBlank()) {
-            model.addAttribute("items", toMapList(productService.searchByNameAndDescription(search)));
+            model.addAttribute("items", toMapList(productService.searchByNameDescription(search)));
             model.addAttribute("searchQuery", search);
         } else {
             model.addAttribute("items", toMapList(productService.findAll()));
