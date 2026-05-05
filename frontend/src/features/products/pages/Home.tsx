@@ -8,7 +8,7 @@ import CardList from "../components/CardList"
 type LoaderData = Page<ProductResponseDTO>
 
 const loader: LoaderFunction = async () => {
-    return await ProductService.getProducts()
+    return await ProductService.getProducts(0, 4)
 }
 
 const Home = () => {
@@ -33,18 +33,13 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
-
         if (alert) {
-
             navigate(location.pathname, { replace: true, state: {} })
-
             const timer = setTimeout(() => {
                 setAlert(null)
             }, 3000)
-
             return () => clearTimeout(timer)
         }
-
     }, [alert, navigate, location.pathname])
 
     const handleClose = () => {
@@ -54,9 +49,8 @@ const Home = () => {
 
     return (
         <>
-
             {alert && (
-                <div style={{ backgroundColor: 'green', color: 'white', padding: '10px' }}>
+                <div className="bg-dark text-white text-center py-2">
                     {alert}
                 </div>
             )}
@@ -64,142 +58,155 @@ const Home = () => {
             <AuthModal isOpen={showModal} onClose={handleClose} />
 
             <main className="container-fluid p-0 overflow-hidden">
-
                 <section
                     id="homePicture"
-                    className="position-relative w-100 overflow-hidden d-flex justify-content-end align-items-center"
+                    className="position-relative w-100 overflow-hidden d-flex justify-content-center align-items-center h-85vh"
                 >
-
                     <video
                         src="/src/assets/video/peopleRunning.mp4"
-                        className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+                        className="position-absolute top-0 start-0 w-100 h-100 object-cover"
                         autoPlay
                         loop
                         muted
                         playsInline
                     />
+                    <div className="position-absolute top-0 start-0 w-100 h-100 bg-overlay" />
 
-                    <div
-                        className="position-absolute top-0 start-0 w-100 h-100"
-                        style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-                    />
-
-                    <div className="position-relative text-center w-100 jutify-content-center text-white z-1" style={{ paddingTop: 300 }}>
-                        <p className="fw-semibold mb-0">HCD Running</p>
-
-                        <h1
-                            className="display-1 fw-black fst-italic text-uppercase mb-4"
-                            style={{ fontWeight: 900 }}
-                        >
-                            WIN ON YOUR TERMS
+                    <div className="position-relative text-center text-white z-1 px-3">
+                        <h5 className="text-uppercase fw-bold mb-3 tracking-widest">MYLITTLESPORT</h5>
+                        <h1 className="display-1 fw-black text-uppercase mb-5">
+                            WIN ON YOUR <br /> TERMS
                         </h1>
-
-                        <div className="d-flex justify-content-center gap-3">
-                            <Link to={"/articles"} className="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-sm">
-                                Comprar
-                            </Link>
-                        </div>
+                        <Link to={"/articles"} className="btn-custom bg-white border-0 px-5 py-3">
+                            Shop Now
+                        </Link>
                     </div>
                 </section>
 
-                <section className="container py-5 my-5">
-                    <div className="d-flex justify-content-between align-items-end mb-4">
-                        <h2 className="h3 fw-bold text-uppercase fst-italic">Los Imprescindibles</h2>
-                        <div className="d-none d-md-flex gap-2">
-                            <button className="btn btn-outline-dark rounded-circle border-0 bg-light p-3">
-                                <i className="bi bi-arrow-left"></i>
-                            </button>
-                            <button className="btn btn-outline-dark rounded-circle border-0 bg-light p-3">
-                                <i className="bi bi-arrow-right"></i>
-                            </button>
-                        </div>
+                <section className="container pt-5 mt-5">
+                    <div className="d-flex justify-content-between align-items-end mb-5">
+                        <h2 className="mb-0">The Essentials</h2>
+                        <Link to="/articles" className="text-dark fw-bold text-uppercase small border-bottom border-2 pb-1">View all</Link>
                     </div>
-
                     <div className="row g-4">
-                    </div>
-                </section>
-
-                <section className="container mb-5">
-                    <div className="bg-black text-white position-relative p-5 overflow-hidden" style={{ minHeight: '500px' }}>
-                        <div className="row h-100 align-items-center">
-                            <div className="col-lg-5 z-2">
-                                <h2 className="display-4 fw-black text-uppercase fst-italic mb-3">No dejes de moverte</h2>
-                                <p className="lead mb-4">Descubre nuestra nueva colección de entrenamiento diseñada para ofrecerte la máxima comodidad.</p>
-                                <button className="btn btn-light rounded-pill px-5 py-3 fw-bold text-uppercase">
-                                    Explorar Colección
-                                </button>
-                            </div>
-                        </div>
-                        <img
-                            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200"
-                            className="position-absolute end-0 top-0 h-100 w-75 object-fit-cover opacity-75 d-none d-lg-block"
-                            alt="Workout Collection"
-                            style={{ maskImage: 'linear-gradient(to right, black 0%, transparent 100%)' }}
-                        />
-                    </div>
-                </section>
-
-                <section className="container py-4 border-bottom border-top my-5">
-                    <div className="row text-center g-4">
-                        <div className="col-md-4">
-                            <i className="bi bi-truck fs-2"></i>
-                            <p className="fw-bold mb-0 mt-2 text-uppercase small">Envío Gratuito</p>
-                            <p className="text-muted small">En pedidos superiores a 50€</p>
-                        </div>
-                        <div className="col-md-4">
-                            <i className="bi bi-arrow-left-right fs-2"></i>
-                            <p className="fw-bold mb-0 mt-2 text-uppercase small">Devoluciones Gratuitas</p>
-                            <p className="text-muted small">Tienes 30 días para decidirte</p>
-                        </div>
-                        <div className="col-md-4">
-                            <i className="bi bi-person-check fs-2"></i>
-                            <p className="fw-bold mb-0 mt-2 text-uppercase small">Exclusivo Miembros</p>
-                            <p className="text-muted small">Productos únicos solo para ti</p>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="container mb-5">
-                    <h2 className="h3 fw-bold text-uppercase fst-italic mb-4">Explora por Deporte</h2>
-                    <div className="row g-3">
                         {!productResponseList.length ? (
-                            <p className='no-items'>No Products Found</p>
+                            <div className="col-12 text-center py-5">
+                                <p className="text-muted h4">No products found</p>
+                            </div>
                         ) : (
                             <CardList products={productResponseList} />
                         )}
                     </div>
                 </section>
 
+                <section className="container py-5">
+                    <h2 className="mb-5">Trending Now</h2>
+                    <div className="row g-4">
+                        <div className="col-12 col-md-4">
+                            <div className="position-relative overflow-hidden group h-600 rounded-5px" style={{ borderRadius: 'var(--btn-border-radius)' }}>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200" 
+                                    className="w-100 h-100 object-cover transition-all brightness-90"
+                                    alt="Trending 1"
+                                />
+                                <div className="position-absolute bottom-0 start-0 p-4 w-100">
+                                    <h4 className="text-white fw-black text-uppercase mb-3">Street Style</h4>
+                                    <Link to="/articles" className="btn-custom bg-white border-0 py-2">Explore</Link>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-12 col-md-4">
+                            <div className="position-relative overflow-hidden group h-600 rounded-5px" style={{ borderRadius: 'var(--btn-border-radius)' }}>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200" 
+                                    className="w-100 h-100 object-cover transition-all brightness-90"
+                                    alt="Trending 2"
+                                />
+                                <div className="position-absolute bottom-0 start-0 p-4 w-100">
+                                    <h4 className="text-white fw-black text-uppercase mb-3">Performance</h4>
+                                    <Link to="/articles" className="btn-custom bg-white border-0 py-2">Explore</Link>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-12 col-md-4">
+                            <div className="position-relative overflow-hidden group h-600 rounded-5px" style={{ borderRadius: 'var(--btn-border-radius)' }}>
+                                <img 
+                                    src="https://images.unsplash.com/photo-1539185441755-769473a23570?q=80&w=1200" 
+                                    className="w-100 h-100 object-cover transition-all brightness-90"
+                                    alt="Trending 3"
+                                />
+                                <div className="position-absolute bottom-0 start-0 p-4 w-100">
+                                    <h4 className="text-white fw-black text-uppercase mb-3">Essentials</h4>
+                                    <Link to="/articles" className="btn-custom bg-white border-0 py-2">Explore</Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section className="container mb-5">
-                    <h2 className="h3 fw-bold text-uppercase fst-italic mb-4">Lo último de esta semana</h2>
-                    <div className="position-relative w-100 shadow-lg" style={{ height: '600px' }}>
+                    <div className="bg-secondary-custom text-dark position-relative p-5 overflow-hidden" style={{ minHeight: '450px', borderRadius: 'var(--btn-border-radius)' }}>
+                        <div className="row h-100 align-items-center">
+                            <div className="col-lg-6 z-2">
+                                <h2 className="display-4 fw-black text-uppercase mb-4">Don't stop <br /> moving</h2>
+                                <p className="lead mb-5 text-muted">Discover our new training collection designed to offer you maximum comfort and performance.</p>
+                                <Link to="/articles" className="btn-dark-custom">
+                                    Explore Collection
+                                </Link>
+                            </div>
+                        </div>
                         <img
-                            src="https://images.unsplash.com/photo-1440151050977-247552660a3b?q=80&w=1600"
-                            className="w-100 h-100 object-fit-cover"
-                            alt="Collection"
+                            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200"
+                            className="position-absolute end-0 top-0 h-100 w-50 object-cover d-none d-lg-block"
+                            alt="Workout Collection"
                         />
-                        <div className="position-absolute top-50 start-0 translate-middle-y p-5 text-white">
-                            <p className="fw-bold mb-1">Colección Entera</p>
-                            <h3 className="display-3 fw-black text-uppercase fst-italic mb-4">COLORES QUE <br />VIBRAN</h3>
-                            <Link to={"/articles"} className="btn btn-light rounded-pill px-4 py-2 fw-bold">Ver Todo</Link>
+                    </div>
+                </section>
+
+                <section className="container mb-5">
+                    <div className="position-relative overflow-hidden w-100 h-700" style={{ borderRadius: 'var(--btn-border-radius)' }}>
+                        <img 
+                            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600" 
+                            className="w-100 h-100 object-cover brightness-70"
+                            alt="Collection Banner"
+                        />
+                        <div className="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
+                            <h5 className="text-uppercase tracking-widest mb-3">Season 2026</h5>
+                            <h2 className="display-1 fw-black text-uppercase mb-4">STYLE WITHOUT LIMITS</h2>
+                            <p className="lead mb-5 mx-auto" style={{ maxWidth: '600px' }}>Discover the pieces that will define your year. Innovation and design in every detail.</p>
+                            <Link to="/articles" className="btn-custom bg-white border-0 px-5 py-3">View Full Collection</Link>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="container py-5 border-bottom border-top my-5">
+                    <div className="row text-center g-4">
+                        <div className="col-md-4">
+                            <h4 className="fw-bold mb-2">Free Shipping</h4>
+                            <p className="text-muted small mb-0">On orders over 50€</p>
+                        </div>
+                        <div className="col-md-4">
+                            <h4 className="fw-bold mb-2">Returns</h4>
+                            <p className="text-muted small mb-0">You have 30 days to decide</p>
+                        </div>
+                        <div className="col-md-4">
+                            <h4 className="fw-bold mb-2">Exclusivity</h4>
+                            <p className="text-muted small mb-0">Unique products just for you</p>
                         </div>
                     </div>
                 </section>
 
                 {!localStorage.getItem('user') && (
-                    <section className="container-fluid bg-light py-5 mt-5 border-top">
+                    <section className="bg-secondary-custom py-5 mt-5">
                         <div className="container py-5 text-center">
-                            <h4 className="fw-black text-uppercase h1 mb-3">Tu ventaja como miembro</h4>
-                            <p className="lead mb-5 text-muted mx-auto" style={{ maxWidth: '700px' }}>
-                                Inicia sesión para disfrutar de envíos rápidos gratuitos, acceso a colecciones exclusivas y experiencias diseñadas para atletas.
+                            <h2 className="fw-black text-uppercase mb-4">Your Advantage as a Member</h2>
+                            <p className="lead mb-5 text-muted mx-auto" style={{ maxWidth: '600px' }}>
+                                Sign in to enjoy free fast shipping, access to exclusive collections, and experiences designed for athletes.
                             </p>
-                            <div className="d-flex justify-content-center gap-3">
-                                <Link to={'/register'} className="btn btn-dark rounded-pill px-5 py-2 fw-bold">Unirse</Link>
-                            </div>
+                            <Link to={'/register'} className="btn-dark-custom px-5">Join Now</Link>
                         </div>
                     </section>
                 )}
-
             </main>
         </>
     )
