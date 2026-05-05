@@ -2,6 +2,11 @@ package com.ecommerce.backend.controller.rest;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +30,12 @@ public class ProductController extends BaseRestController<ProductResponseDTO, Pr
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductResponseDTO>> searchProducts(@RequestParam String query) {
-        return ResponseEntity.ok(productService.searchByNameAndDescription(query));
+    public ResponseEntity<PagedModel<EntityModel<ProductResponseDTO>>> searchProducts(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String priceOrder,
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<ProductResponseDTO> page = productService.searchFiltered(query, category, priceOrder, pageable);
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(page));
     }
 }

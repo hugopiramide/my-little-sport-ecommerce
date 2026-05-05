@@ -63,10 +63,10 @@ public class ProductVariantManagementViewController extends BaseManagementContro
     public String create(@RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
         try {
             ProductVariantRequestDTO dto = new ProductVariantRequestDTO(
-                    requiredLong(formData, "product_id"),
+                    requiredLong(formData, "productId"),
                     requiredText(formData, "size"),
                     requiredLong(formData, "stock"),
-                    requiredDouble(formData, "price_modifier")
+                    requiredDouble(formData, "priceModifier")
             );
             Object result = productVariantService.createFromDto(dto);
             redirectAttributes.addFlashAttribute("flashType", "ok");

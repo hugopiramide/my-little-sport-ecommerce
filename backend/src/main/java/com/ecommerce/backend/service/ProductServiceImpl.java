@@ -14,8 +14,16 @@ import com.ecommerce.backend.model.Product;
 import com.ecommerce.backend.model.ProductVariant;
 import com.ecommerce.backend.repository.CategoryRepository;
 import com.ecommerce.backend.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.domain.Sort.Direction.DESC;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import com.ecommerce.backend.service.interfaces.OrderItemService;
 import com.ecommerce.backend.service.interfaces.ProductService;
+
+import org.springframework.data.domain.PageImpl;
 
 @Service
 public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResponseDTO, ProductRequestDTO, ProductRequestDTO> implements ProductService {
@@ -106,6 +114,31 @@ public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResp
                 .stream()
                 .map(productMapper::toProductResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public Page<ProductResponseDTO> searchFiltered(String query, String category, String priceOrder, Pageable pageable) {
+        Sort sort = Sort.unsorted();
+        if ("low".equalsIgnoreCase(priceOrder)) {
+            sort = Sort.by(ASC, "productData.basePrice");
+        } else if ("high".equalsIgnoreCase(priceOrder)) {
+            sort = Sort.by(DESC, "productData.basePrice");
+        }
+
+        List<Product> allProducts = ((ProductRepository) repository).findFiltered(query, category, sort);
+        
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allProducts.size());
+        
+        List<ProductResponseDTO> pagedList = java.util.Collections.emptyList();
+        if (start <= allProducts.size()) {
+            pagedList = allProducts.subList(start, end)
+                    .stream()
+                    .map(productMapper::toProductResponseDTO)
+                    .toList();
+        }
+
+        return new PageImpl<>(pagedList, pageable, allProducts.size());
     }
 
     private Category resolveCategory(int categoryId) {

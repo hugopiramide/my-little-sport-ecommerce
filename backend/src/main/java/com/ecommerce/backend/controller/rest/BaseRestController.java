@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 public abstract class BaseRestController<T, CreateIn, UpdateIn> {
 
     private final BaseCrudService<T, CreateIn, UpdateIn, Long> service;
-    private final PagedResourcesAssembler<T> pagedResourcesAssembler;
+    protected final PagedResourcesAssembler<T> pagedResourcesAssembler;
 
     protected BaseRestController(BaseCrudService<T, CreateIn, UpdateIn, Long> service, PagedResourcesAssembler<T> pagedResourcesAssembler) {
         this.service = service;
