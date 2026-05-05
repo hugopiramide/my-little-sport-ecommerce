@@ -52,3 +52,11 @@ export interface ProductReviewRequestDTO {
   rating: number;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
+
+export interface ProductFilterParams {
+  query?: string;
+  category?: string;
+  priceOrder?: string;
+  page?: number;
+  size?: number;
+}
