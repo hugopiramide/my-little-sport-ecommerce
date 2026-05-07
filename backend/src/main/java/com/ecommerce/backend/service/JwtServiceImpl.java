@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.backend.config.SecurityProperties;
+import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.service.interfaces.JwtService;
 
 import io.jsonwebtoken.Claims;
@@ -27,11 +28,17 @@ public class JwtServiceImpl implements JwtService {
     }
     
     public String generateToken(UserDetails userDetails) {
+        Long userId = null;
+        if (userDetails instanceof com.ecommerce.backend.model.User) {
+            userId = ((User) userDetails).getId();
+        }
+        
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("authorities", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .toList())
+                .claim("id", userId)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 Hours
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

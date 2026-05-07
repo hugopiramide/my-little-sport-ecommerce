@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ecommerce.backend.model.User;
 import java.util.Optional;
+import java.time.Instant;
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
@@ -15,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long>{
     Optional<User> findByPersonalDataUsername(String username);
 
     Optional<User> findByPersonalDataEmail(String email);
+
+    List<User> findByEmailVerifiedFalseAndEmailVerificationCodeExpiryBefore(Instant timestamp);
 }

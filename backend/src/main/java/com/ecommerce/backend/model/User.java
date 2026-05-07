@@ -1,5 +1,6 @@
 package com.ecommerce.backend.model;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ecommerce.backend.model.enums.Role;
-import com.ecommerce.backend.model.vo.Birthday;
 import com.ecommerce.backend.model.vo.Password;
 import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.model.vo.ShippingAddress;
@@ -81,6 +81,15 @@ public class User implements UserDetails{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "email_verified")
+    private Boolean emailVerified = Boolean.FALSE;
+
+    @Column(name = "email_verification_code_hash", length = 255)
+    private String emailVerificationCodeHash;
+
+    @Column(name = "email_verification_code_expiry")
+    private Instant emailVerificationCodeExpiry;
+
     public User(PersonalData personalData, Password password, Role role) {
         this.personalData = personalData;
         this.password = password;
@@ -119,6 +128,9 @@ public class User implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return true;
+        // Para no “romper” usuarios pre-seed (donde puede venir NULL desde data.sql):
+        // - si emailVerified == null => consideramos el usuario habilitado
+        // - si es FALSE => requiere verificación
+        return emailVerified == null || Boolean.TRUE.equals(emailVerified);
     }
 }

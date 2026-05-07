@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.backend.dto.auth.*;
 import com.ecommerce.backend.dto.auth.RegisterRequest;
+import com.ecommerce.backend.dto.auth.ResendVerificationRequest;
+import com.ecommerce.backend.dto.auth.VerifyEmailRequest;
 import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.model.enums.Role;
 import com.ecommerce.backend.model.vo.Password;
@@ -15,24 +17,37 @@ import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.service.interfaces.JwtService;
 
+import java.time.Instant;
+
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmailVerificationService emailVerificationService;
 
-    public AuthService( UserRepository userRepository, JwtService jwtService, AuthenticationManager authenticationManager ) {
+    public AuthService(
+        UserRepository userRepository,
+        JwtService jwtService,
+        AuthenticationManager authenticationManager,
+        EmailVerificationService emailVerificationService
+    ) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.emailVerificationService = emailVerificationService;
     }
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
 
         if (userRepository.findByPersonalDataUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
+        }
+
+        if (userRepository.findByPersonalDataEmail(request.email()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
         }
         
         User user = new User(
@@ -48,9 +63,12 @@ public class AuthService {
         );
         
         userRepository.save(user);
-        
-        String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+
+        try {
+            return emailVerificationService.createAndSendCode(user);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -77,5 +95,41 @@ public class AuthService {
 
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
+    }
+
+    @Transactional
+    public AuthResponse verifyEmail(VerifyEmailRequest request) {
+        User user = userRepository.findByPersonalDataUsername(request.username())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (Boolean.TRUE.equals(user.getEmailVerified())) {
+            String jwtToken = jwtService.generateToken(user);
+            return new AuthResponse(jwtToken);
+        }
+
+        boolean isValid = emailVerificationService.isCodeValid(user, request.code());
+        if (!isValid) {
+            Instant expiresAt = user.getEmailVerificationCodeExpiry();
+            if (expiresAt != null && expiresAt.isBefore(Instant.now())) {
+                userRepository.delete(user);
+            }
+            throw new IllegalArgumentException("Invalid or expired verification code");
+        }
+
+        emailVerificationService.markEmailVerified(user);
+        String jwtToken = jwtService.generateToken(user);
+        return new AuthResponse(jwtToken);
+    }
+
+    @Transactional
+    public RegisterResponse resendVerificationCode(ResendVerificationRequest request) {
+        User user = userRepository.findByPersonalDataUsername(request.username())
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (Boolean.TRUE.equals(user.getEmailVerified())) {
+            return new RegisterResponse(false, user.getUsername(), user.getPersonalData().getEmail(), 0);
+        }
+
+        return emailVerificationService.createAndSendCode(user);
     }
 }
