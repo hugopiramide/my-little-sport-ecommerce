@@ -1,5 +1,5 @@
 export const getCurrentUser = () => {
-    const userData = localStorage.getItem('user')
+    const userData = sessionStorage.getItem('user')
     if (!userData) return null
 
     try {
@@ -14,6 +14,39 @@ export const getCurrentUserId = (): number | null => {
     return user?.id ?? null
 }
 
+export const getToken = (): string | null => {
+    return sessionStorage.getItem('token')
+}
+
+export const getAuthHeaders = () => {
+    const token = getToken()
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+    }
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+    }
+    
+    return headers
+}
+
 export const isUserLoggedIn = (): boolean => {
-    return getCurrentUserId() !== null
+    return getToken() !== null
+}
+
+export const validatePassword = (password: string): { isValid: boolean; message?: string } => {
+    if (!password) return { isValid: false, message: 'Password is required' }
+    
+    const minLength = 8
+    const strongPasswordRegex = /^(?=\S+$)(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/
+    
+    if (!strongPasswordRegex.test(password)) {
+        return {
+            isValid: false,
+            message: `Password must be at least ${minLength} characters and include uppercase, lowercase, digits and special characters`
+        }
+    }
+    
+    return { isValid: true }
 }
