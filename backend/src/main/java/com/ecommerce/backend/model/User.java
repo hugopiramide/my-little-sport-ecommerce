@@ -94,6 +94,9 @@ public class User implements UserDetails{
         this.personalData = personalData;
         this.password = password;
         this.role = role;
+        this.emailVerified = Boolean.FALSE;
+        this.emailVerificationCodeHash = null;
+        this.emailVerificationCodeExpiry = null;
     }
 
     @Override
@@ -128,9 +131,6 @@ public class User implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        // Para no “romper” usuarios pre-seed (donde puede venir NULL desde data.sql):
-        // - si emailVerified == null => consideramos el usuario habilitado
-        // - si es FALSE => requiere verificación
         return emailVerified == null || Boolean.TRUE.equals(emailVerified);
     }
 }
