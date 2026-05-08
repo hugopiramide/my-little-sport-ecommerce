@@ -37,8 +37,36 @@ export interface RegisterRequest {
   password?: string;
 }
 
+export interface UserDTO {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  emailVerified: boolean;
+  requiresVerification: boolean;
+  verificationExpiresInSeconds: number;
+}
+
+export interface RegisterResponse {
+  requiresVerification: boolean;
+  user: UserDTO;
+  verificationExpiresInSeconds: number;
+}
+
 export interface AuthResponse {
   token: string;
+  user: UserDTO;
+  requiresVerification: boolean;
+  verificationExpiresInSeconds: number;
+}
+
+export interface VerifyEmailRequest {
+  username: string;
+  code: string;
+}
+
+export interface ResendVerificationRequest {
+  username: string;
 }
 
 // Requests
