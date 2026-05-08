@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.backend.dto.auth.AuthResponse;
 import com.ecommerce.backend.dto.auth.LoginRequest;
-import com.ecommerce.backend.dto.auth.RegisterResponse;
 import com.ecommerce.backend.dto.auth.RegisterRequest;
+import com.ecommerce.backend.dto.auth.RegisterResponse;
 import com.ecommerce.backend.dto.auth.ResendVerificationRequest;
 import com.ecommerce.backend.dto.auth.VerifyEmailRequest;
 import com.ecommerce.backend.service.AuthService;

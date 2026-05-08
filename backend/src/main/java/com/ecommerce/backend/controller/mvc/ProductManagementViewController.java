@@ -45,7 +45,7 @@ public class ProductManagementViewController extends BaseManagementController {
         return "management-list";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create")  
     public String create(@RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
         try {
             ProductRequestDTO dto = new ProductRequestDTO(

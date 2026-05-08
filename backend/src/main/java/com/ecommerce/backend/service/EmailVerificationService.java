@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.backend.dto.auth.RegisterResponse;
+import com.ecommerce.backend.dto.auth.UserDTO;
 import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.repository.UserRepository;
 
@@ -55,11 +56,21 @@ public class EmailVerificationService {
 
         sendEmail(user, rawCode);
 
+        long verificationExpiresInSeconds = Duration.between(now, expiresAt).getSeconds();
+        UserDTO userDTO = new UserDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmailVerified(),
+            user.getPersonalData().getEmail(),
+            user.getRole(),
+            true,
+            verificationExpiresInSeconds
+        );
+
         return new RegisterResponse(
             true,
-            user.getUsername(),
-            user.getPersonalData().getEmail(),
-            Duration.between(now, expiresAt).getSeconds()
+            userDTO,
+            verificationExpiresInSeconds
         );
     }
 

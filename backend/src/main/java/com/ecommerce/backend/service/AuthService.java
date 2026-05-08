@@ -80,7 +80,16 @@ public class AuthService {
         User user = (User) authentication.getPrincipal();
             
         String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+        UserDTO userDTO = new UserDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmailVerified(),
+            user.getPersonalData().getEmail(),
+            user.getRole(),
+            false,
+            0
+        );
+        return new AuthResponse(jwtToken, userDTO, false, 0);
     }
 
     public AuthResponse loginAdmin(LoginRequest request) {
@@ -94,7 +103,16 @@ public class AuthService {
         }
 
         String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+        UserDTO userDTO = new UserDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmailVerified(),
+            user.getPersonalData().getEmail(),
+            user.getRole(),
+            false,
+            0
+        );
+        return new AuthResponse(jwtToken, userDTO, false, 0);
     }
 
     @Transactional
@@ -104,7 +122,16 @@ public class AuthService {
 
         if (Boolean.TRUE.equals(user.getEmailVerified())) {
             String jwtToken = jwtService.generateToken(user);
-            return new AuthResponse(jwtToken);
+            UserDTO userDTO = new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmailVerified(),
+                user.getPersonalData().getEmail(),
+                user.getRole(),
+                false,
+                0
+            );
+            return new AuthResponse(jwtToken, userDTO, false, 0);
         }
 
         boolean isValid = emailVerificationService.isCodeValid(user, request.code());
@@ -118,7 +145,16 @@ public class AuthService {
 
         emailVerificationService.markEmailVerified(user);
         String jwtToken = jwtService.generateToken(user);
-        return new AuthResponse(jwtToken);
+        UserDTO userDTO = new UserDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getEmailVerified(),
+            user.getPersonalData().getEmail(),
+            user.getRole(),
+            false,
+            0
+        );
+        return new AuthResponse(jwtToken, userDTO, false, 0);
     }
 
     @Transactional
@@ -127,7 +163,16 @@ public class AuthService {
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (Boolean.TRUE.equals(user.getEmailVerified())) {
-            return new RegisterResponse(false, user.getUsername(), user.getPersonalData().getEmail(), 0);
+            UserDTO userDTO = new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmailVerified(),
+                user.getPersonalData().getEmail(),
+                user.getRole(),
+                false,
+                0
+            );
+            return new RegisterResponse(false, userDTO, 0);
         }
 
         return emailVerificationService.createAndSendCode(user);
