@@ -5,6 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.ecommerce.backend.model.Cart;
 
+import java.util.Optional;
+
 @Repository
-public interface CartRepository extends JpaRepository<Cart, Long> {}
+public interface CartRepository extends JpaRepository<Cart, Long> {
+    Optional<Cart> findByUserId(Long userId);
+}
 
