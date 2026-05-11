@@ -5,6 +5,9 @@
 
 -- ============================================================
 -- USUARIOS (18 usuarios: 1 admin + 17 usuarios normales)
+-- Passwords:
+--   Admin: AdminAa1!23dmin
+--   Users: AdminAa1!23dmin
 -- ============================================================
 INSERT INTO `user` (`name`, `surname`, `user_name`, `email`, `profile_img_url`, `date`, `password`, `role`) VALUES
   ('Admin',    'Test',       'admin',    'admin@example.com',    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100', '1975-03-15', '$2a$10$lKS4sIwdmasRHYBe30LyvO.8nugzhXP8quK1vOeaGCHFuODYLf1hq', 'ADMIN'),
@@ -334,4 +337,54 @@ INSERT INTO `product_review` (`user_id`, `product_id`, `order_id`, `title`, `bod
   (3, 1, 4, 'Buenas pero caras', 'La amortiguación es genial, pero el precio es un poco elevado.', 4, 'APPROVED', NOW()),
   (6, 15, 11, 'Imprescindibles para trail', 'Resistentes y totalmente impermeables. Las mejores que he tenido.', 5, 'APPROVED', NOW()),
   (9, 5, 17, 'Normalitas', 'Esperaba más durabilidad para crossfit.', 3, 'PENDING',  NOW());
+
+-- ============================================================
+-- CARRITOS (Carts para todos los usuarios)
+-- ============================================================
+INSERT INTO `cart` (`user_id`, `update_at`) VALUES
+(1, NOW()), (2, NOW()), (3, NOW()), (4, NOW()), (5, NOW()),
+(6, NOW()), (7, NOW()), (8, NOW()), (9, NOW()), (10, NOW()),
+(11, NOW()), (12, NOW()), (13, NOW()), (14, NOW()), (15, NOW()),
+(16, NOW()), (17, NOW()), (18, NOW());
+
+-- ============================================================
+-- ARTÍCULOS EN CARRITO (Cart Items)
+-- ============================================================
+INSERT INTO `cart_items` (`cart_id`, `product_variant_id`, `quantity`) VALUES
+-- Carrito 1 (Admin)
+(1, 1, 1), (1, 42, 1),
+-- Carrito 2 (Hugo)
+(2, 3, 2), (2, 29, 1),
+-- Carrito 3 (María)
+(3, 10, 1), (3, 22, 1),
+-- Carrito 4 (Carlos)
+(4, 33, 1), (4, 15, 1),
+-- Carrito 5 (Laura)
+(5, 57, 1), (5, 48, 2),
+-- Carrito 6 (Andrés)
+(6, 62, 1), (6, 83, 1),
+-- Carrito 7 (Sofía)
+(7, 53, 1), (7, 48, 1),
+-- Carrito 8 (Pablo)
+(8, 67, 1), (8, 1, 1),
+-- Carrito 9 (Elena)
+(9, 29, 2), (9, 42, 1),
+-- Carrito 10 (Diego)
+(10, 94, 1), (10, 57, 1),
+-- Carrito 11 (Valentina)
+(11, 48, 1), (11, 15, 1),
+-- Carrito 12 (Javier)
+(12, 77, 1), (12, 83, 1),
+-- Carrito 13 (Camila)
+(13, 29, 1), (13, 42, 1),
+-- Carrito 14 (Sergio)
+(14, 57, 1), (14, 1, 1),
+-- Carrito 15 (Natalia)
+(15, 22, 2), (15, 33, 1),
+-- Carrito 16 (Miguel)
+(16, 62, 1), (16, 67, 1),
+-- Carrito 17 (Isabella)
+(17, 10, 1), (17, 53, 1),
+-- Carrito 18 (Rodrigo)
+(18, 15, 1), (18, 29, 1);
 
