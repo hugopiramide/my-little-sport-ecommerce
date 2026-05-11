@@ -11,6 +11,7 @@ import com.ecommerce.backend.repository.CartItemsRepository;
 import com.ecommerce.backend.repository.CartRepository;
 import com.ecommerce.backend.repository.ProductVariantRepository;
 import com.ecommerce.backend.repository.UserRepository;
+import com.ecommerce.backend.exception.InsufficientStockException;
 import com.ecommerce.backend.service.interfaces.CartService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class CartServiceImpl extends BaseCrudServiceImpl<Cart, CartResponseDTO, 
         long newQuantity = currentQuantity + itemDto.quantity();
 
         if (newQuantity > variant.getStock()) {
-            throw new IllegalArgumentException("Not enough stock available. Current in cart: " + currentQuantity + ", Requested additional: " + itemDto.quantity() + ", Available: " + variant.getStock());
+            throw new InsufficientStockException("Not enough stock available.");
         }
 
         if (cartItem != null) {
