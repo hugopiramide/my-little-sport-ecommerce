@@ -62,13 +62,20 @@ public class CartServiceImpl extends BaseCrudServiceImpl<Cart, CartResponseDTO, 
             .findFirst()
             .orElse(null);
 
+        long currentQuantity = (cartItem != null) ? cartItem.getQuantity() : 0L;
+        long newQuantity = currentQuantity + itemDto.quantity();
+
+        if (newQuantity > variant.getStock()) {
+            throw new IllegalArgumentException("Not enough stock available. Current in cart: " + currentQuantity + ", Requested additional: " + itemDto.quantity() + ", Available: " + variant.getStock());
+        }
+
         if (cartItem != null) {
-            cartItem.setQuantity(cartItem.getQuantity() + itemDto.quantity());
+            cartItem.setQuantity(newQuantity);
         } else {
             cartItem = new CartItems();
             cartItem.setCart(cart);
             cartItem.setProductVariant(variant);
-            cartItem.setQuantity(itemDto.quantity());
+            cartItem.setQuantity(newQuantity);
             cart.getCartItems().add(cartItem);
         }
 
