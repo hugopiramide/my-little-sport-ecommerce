@@ -12,6 +12,7 @@ import com.ecommerce.backend.model.CartItems;
 public interface CartItemsMapper {
 
     @Mapping(source = "cart.id", target = "cartId")
+    @Mapping(source = "productVariant", target = "productVariantId")
     CartItemsResponseDTO toCartItemsResponseDTO(CartItems cartItems);
 
     @Mapping(target = "id", ignore = true)
