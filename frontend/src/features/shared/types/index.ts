@@ -224,9 +224,8 @@ export interface UserFavoriteResponseDTO {
   created_at: string;
 }
 
-// Existing legacy types that might be needed temporarily or aren't mapped in DTOs
 export interface UserResponse {
-  id: number;
+  id?: number;
   username: string;
   name: string;
   surnames: string;

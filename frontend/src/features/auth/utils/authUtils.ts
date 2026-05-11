@@ -1,3 +1,13 @@
+import { jwtDecode } from 'jwt-decode';
+
+interface TokenPayload {
+    sub: string;
+    id: number;
+    authorities: string[];
+    iat: number;
+    exp: number;
+}
+
 export const getCurrentUser = () => {
     const userData = sessionStorage.getItem('user')
     if (!userData) return null
@@ -10,8 +20,16 @@ export const getCurrentUser = () => {
 }
 
 export const getCurrentUserId = (): number | null => {
-    const user = getCurrentUser()
-    return user?.id ?? null
+    const token = getToken()
+    if (!token) return null
+
+    try {
+        const decoded = jwtDecode<TokenPayload>(token)
+        return decoded.id
+    } catch (error) {
+        console.error('Error decoding token:', error)
+        return null
+    }
 }
 
 export const getToken = (): string | null => {
