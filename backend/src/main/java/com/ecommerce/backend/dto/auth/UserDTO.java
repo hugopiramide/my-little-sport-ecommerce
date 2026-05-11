@@ -1,13 +1,32 @@
 package com.ecommerce.backend.dto.auth;
 
-import com.ecommerce.backend.model.enums.Role;
+import com.ecommerce.backend.model.User;
+import java.time.LocalDate;
 
 public record UserDTO(
     Long id,
     String username,
+    String name,
+    String surname,
+    String profileImgUrl,
+    LocalDate birthday,
     Boolean emailVerified,
     String email,
-    Role role,
     Boolean requiresVerification,
     long verificationExpiresInSeconds
-) {}
+) {
+    public UserDTO(User user, Boolean requiresVerification, long verificationExpiresInSeconds) {
+        this(
+            user.getId(),
+            user.getUsername(),
+            user.getPersonalData().getName(),
+            user.getPersonalData().getSurname(),
+            user.getPersonalData().getProfileImgUrl(),
+            user.getPersonalData().getBirthday() != null ? user.getPersonalData().getBirthday().getDate() : null,
+            user.getEmailVerified(),
+            user.getPersonalData().getEmail(),
+            requiresVerification,
+            verificationExpiresInSeconds
+        );
+    }
+}

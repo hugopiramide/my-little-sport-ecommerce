@@ -17,6 +17,7 @@ import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.service.interfaces.JwtService;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Service
@@ -80,16 +81,21 @@ public class AuthService {
         User user = (User) authentication.getPrincipal();
             
         String jwtToken = jwtService.generateToken(user);
-        UserDTO userDTO = new UserDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getEmailVerified(),
-            user.getPersonalData().getEmail(),
-            user.getRole(),
-            false,
-            0
-        );
-        return new AuthResponse(jwtToken, userDTO, false, 0);
+        
+        boolean requiresVerification = !Boolean.TRUE.equals(user.getEmailVerified());
+        long verificationExpiresInSeconds = 0;
+        if (requiresVerification && user.getEmailVerificationCodeExpiry() != null) {
+            verificationExpiresInSeconds = Duration.between(
+                Instant.now(),
+                user.getEmailVerificationCodeExpiry()
+            ).getSeconds();
+            if (verificationExpiresInSeconds < 0) {
+                verificationExpiresInSeconds = 0;
+            }
+        }
+        
+        UserDTO userDTO = new UserDTO(user, requiresVerification, verificationExpiresInSeconds);
+        return new AuthResponse(jwtToken, userDTO, requiresVerification, verificationExpiresInSeconds);
     }
 
     public AuthResponse loginAdmin(LoginRequest request) {
@@ -103,16 +109,21 @@ public class AuthService {
         }
 
         String jwtToken = jwtService.generateToken(user);
-        UserDTO userDTO = new UserDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getEmailVerified(),
-            user.getPersonalData().getEmail(),
-            user.getRole(),
-            false,
-            0
-        );
-        return new AuthResponse(jwtToken, userDTO, false, 0);
+        
+        boolean requiresVerification = !Boolean.TRUE.equals(user.getEmailVerified());
+        long verificationExpiresInSeconds = 0;
+        if (requiresVerification && user.getEmailVerificationCodeExpiry() != null) {
+            verificationExpiresInSeconds = Duration.between(
+                Instant.now(),
+                user.getEmailVerificationCodeExpiry()
+            ).getSeconds();
+            if (verificationExpiresInSeconds < 0) {
+                verificationExpiresInSeconds = 0;
+            }
+        }
+        
+        UserDTO userDTO = new UserDTO(user, requiresVerification, verificationExpiresInSeconds);
+        return new AuthResponse(jwtToken, userDTO, requiresVerification, verificationExpiresInSeconds);
     }
 
     @Transactional
@@ -122,15 +133,7 @@ public class AuthService {
 
         if (Boolean.TRUE.equals(user.getEmailVerified())) {
             String jwtToken = jwtService.generateToken(user);
-            UserDTO userDTO = new UserDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmailVerified(),
-                user.getPersonalData().getEmail(),
-                user.getRole(),
-                false,
-                0
-            );
+            UserDTO userDTO = new UserDTO(user, false, 0);
             return new AuthResponse(jwtToken, userDTO, false, 0);
         }
 
@@ -145,15 +148,7 @@ public class AuthService {
 
         emailVerificationService.markEmailVerified(user);
         String jwtToken = jwtService.generateToken(user);
-        UserDTO userDTO = new UserDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getEmailVerified(),
-            user.getPersonalData().getEmail(),
-            user.getRole(),
-            false,
-            0
-        );
+        UserDTO userDTO = new UserDTO(user, false, 0);
         return new AuthResponse(jwtToken, userDTO, false, 0);
     }
 
@@ -163,15 +158,7 @@ public class AuthService {
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if (Boolean.TRUE.equals(user.getEmailVerified())) {
-            UserDTO userDTO = new UserDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmailVerified(),
-                user.getPersonalData().getEmail(),
-                user.getRole(),
-                false,
-                0
-            );
+            UserDTO userDTO = new UserDTO(user, false, 0);
             return new RegisterResponse(false, userDTO, 0);
         }
 

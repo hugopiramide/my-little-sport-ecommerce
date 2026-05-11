@@ -57,15 +57,7 @@ public class EmailVerificationService {
         sendEmail(user, rawCode);
 
         long verificationExpiresInSeconds = Duration.between(now, expiresAt).getSeconds();
-        UserDTO userDTO = new UserDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getEmailVerified(),
-            user.getPersonalData().getEmail(),
-            user.getRole(),
-            true,
-            verificationExpiresInSeconds
-        );
+        UserDTO userDTO = new UserDTO(user, true, verificationExpiresInSeconds);
 
         return new RegisterResponse(
             true,
