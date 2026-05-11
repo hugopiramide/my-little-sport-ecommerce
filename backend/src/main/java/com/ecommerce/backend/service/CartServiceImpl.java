@@ -7,56 +7,46 @@ import com.ecommerce.backend.mapper.CartMapper;
 import com.ecommerce.backend.model.Cart;
 import com.ecommerce.backend.model.CartItems;
 import com.ecommerce.backend.model.ProductVariant;
-import com.ecommerce.backend.repository.CartItemsRepository;
-import com.ecommerce.backend.repository.CartRepository;
-import com.ecommerce.backend.repository.ProductVariantRepository;
-import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.exception.InsufficientStockException;
+import com.ecommerce.backend.repository.CartRepository;
 import com.ecommerce.backend.service.interfaces.CartService;
+import com.ecommerce.backend.service.interfaces.ProductVariantService;
+import com.ecommerce.backend.service.interfaces.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CartServiceImpl extends BaseCrudServiceImpl<Cart, CartResponseDTO, CartRequestDTO, CartRequestDTO> implements CartService {
-
-    private final CartRepository cartRepository;
     private final CartMapper cartMapper;
-    private final UserRepository userRepository;
-    private final ProductVariantRepository productVariantRepository;
-    private final CartItemsRepository cartItemsRepository;
+    private final UserService userService;
+    private final ProductVariantService productVariantService;
 
     public CartServiceImpl(
             CartRepository cartRepository, 
             CartMapper cartMapper,
-            UserRepository userRepository,
-            ProductVariantRepository productVariantRepository,
-            CartItemsRepository cartItemsRepository) {
+            UserService userService,
+            ProductVariantService productVariantService) {
         super(cartRepository);
-        this.cartRepository = cartRepository;
         this.cartMapper = cartMapper;
-        this.userRepository = userRepository;
-        this.productVariantRepository = productVariantRepository;
-        this.cartItemsRepository = cartItemsRepository;
+        this.userService = userService;
+        this.productVariantService = productVariantService;
     }
 
     @Override
     @Transactional
     public CartResponseDTO addItem(Long userId, CartItemsRequestDTO itemDto) {
-        Cart cart = cartRepository.findByUserId(userId)
+        Cart cart = ((CartRepository) repository).findByUserId(userId)
             .orElseGet(() -> {
                 Cart newCart = new Cart();
-                newCart.setUser(userRepository.findById(userId)
-                    .orElseThrow(() -> new EntityNotFoundException("User not found")));
-                return cartRepository.save(newCart);
+                newCart.setUser(userService.getById(userId));
+                return repository.save(newCart);
             });
 
-        ProductVariant variant = productVariantRepository.findById(itemDto.product_variant_id())
-            .orElseThrow(() -> new EntityNotFoundException("Product variant not found"));
+        ProductVariant variant = productVariantService.findEntityById(itemDto.product_variant_id());
 
         CartItems cartItem = cart.getCartItems().stream()
             .filter(item -> item.getProductVariant() != null && item.getProductVariant().getId().equals(variant.getId()))
@@ -70,20 +60,37 @@ public class CartServiceImpl extends BaseCrudServiceImpl<Cart, CartResponseDTO, 
             throw new InsufficientStockException("Not enough stock available.");
         }
 
-        if (cartItem != null) {
-            cartItem.setQuantity(newQuantity);
+        if (newQuantity <= 0) {
+            if (cartItem != null) {
+                cart.getCartItems().remove(cartItem);
+            }
         } else {
-            cartItem = new CartItems();
-            cartItem.setCart(cart);
-            cartItem.setProductVariant(variant);
-            cartItem.setQuantity(newQuantity);
-            cart.getCartItems().add(cartItem);
+            if (cartItem != null) {
+                cartItem.setQuantity(newQuantity);
+            } else {
+                cartItem = new CartItems();
+                cartItem.setCart(cart);
+                cartItem.setProductVariant(variant);
+                cartItem.setQuantity(newQuantity);
+                cart.getCartItems().add(cartItem);
+            }
         }
 
-        cartItemsRepository.save(cartItem);
         cart.setUpdate_at(LocalDateTime.now());
-        cartRepository.save(cart);
+        repository.save(cart);
 
+        return toDto(cart);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CartResponseDTO findByUserId(Long userId) {
+        Cart cart = ((CartRepository) repository).findByUserId(userId)
+            .orElseGet(() -> {
+                Cart newCart = new Cart();
+                newCart.setUser(userService.getById(userId));
+                return repository.save(newCart);
+            });
         return toDto(cart);
     }
 

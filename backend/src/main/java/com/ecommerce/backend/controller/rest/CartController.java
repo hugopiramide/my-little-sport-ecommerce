@@ -23,4 +23,9 @@ public class CartController extends BaseRestController<CartResponseDTO, CartRequ
     public ResponseEntity<CartResponseDTO> addItemToUserCart(@PathVariable Long userId, @RequestBody CartItemsRequestDTO itemDto) {
         return ResponseEntity.ok(cartService.addItem(userId, itemDto));
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<CartResponseDTO> getCartByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.findByUserId(userId));
+    }
 }

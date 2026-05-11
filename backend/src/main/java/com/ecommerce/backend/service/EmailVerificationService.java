@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ecommerce.backend.dto.auth.RegisterResponse;
 import com.ecommerce.backend.dto.auth.UserDTO;
 import com.ecommerce.backend.model.User;
-import com.ecommerce.backend.repository.UserRepository;
-
+import com.ecommerce.backend.service.interfaces.UserService;
 import java.security.SecureRandom;
 
 @Service
@@ -25,7 +24,7 @@ public class EmailVerificationService {
 
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     private final SecureRandom random = new SecureRandom();
 
@@ -35,10 +34,10 @@ public class EmailVerificationService {
     @Value("${app.security.email-verification.expiration-minutes:15}")
     private long expirationMinutes;
 
-    public EmailVerificationService(JavaMailSender mailSender, PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public EmailVerificationService(JavaMailSender mailSender, PasswordEncoder passwordEncoder, UserService userService) {
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Transactional
@@ -50,7 +49,7 @@ public class EmailVerificationService {
         user.setEmailVerified(Boolean.FALSE);
         user.setEmailVerificationCodeHash(passwordEncoder.encode(rawCode));
         user.setEmailVerificationCodeExpiry(expiresAt);
-        userRepository.save(user);
+        userService.save(user);
 
         System.out.println("[DEV] Email verification code for " + user.getPersonalData().getEmail() + ": " + rawCode);
 
@@ -83,7 +82,7 @@ public class EmailVerificationService {
         user.setEmailVerified(Boolean.TRUE);
         user.setEmailVerificationCodeHash(null);
         user.setEmailVerificationCodeExpiry(null);
-        userRepository.save(user);
+        userService.save(user);
     }
 
     private String generateNumericCode() {

@@ -4,7 +4,6 @@ import com.ecommerce.backend.model.User;
 import java.time.LocalDate;
 
 public record UserDTO(
-    Long id,
     String username,
     String name,
     String surname,
@@ -17,7 +16,6 @@ public record UserDTO(
 ) {
     public UserDTO(User user, Boolean requiresVerification, long verificationExpiresInSeconds) {
         this(
-            user.getId(),
             user.getUsername(),
             user.getPersonalData().getName(),
             user.getPersonalData().getSurname(),

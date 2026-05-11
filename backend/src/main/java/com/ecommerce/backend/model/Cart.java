@@ -11,6 +11,7 @@ import lombok.ToString;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -37,7 +38,7 @@ public class Cart {
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "cart", orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CartItems> cartItems = new ArrayList<>();
 
     @Column(name = "update_at")
