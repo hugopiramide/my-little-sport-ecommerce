@@ -2,6 +2,9 @@ package com.ecommerce.backend.controller.mvc;
 
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,29 +34,43 @@ public class ProductVariantManagementViewController extends BaseManagementContro
 
     @GetMapping("/list")
     public String list(Model model, 
-                       @RequestParam(required = false) Long editId,
-                       @RequestParam(required = false) Long productId,
-                       @RequestParam(required = false) Long stockMin,
-                       @RequestParam(required = false) Long stockMax,
-                       @RequestParam(required = false) String size) {
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false) Long productId,
+                        @RequestParam(required = false) Long stockMin,
+                        @RequestParam(required = false) Long stockMax,
+                        @RequestParam(name = "filterSize", required = false) String filterSize,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "8") int size) {
         model.addAttribute("entityName", "Product Variants");
         model.addAttribute("entityKey", "product-variants");
         model.addAttribute("editId", editId);
         
-        // Normalize empty string to null for proper filtering
-        String normalizedSize = (size != null && !size.isBlank()) ? size : null;
+        String normalizedFilterSize = (filterSize != null && !filterSize.isBlank()) ? filterSize : null;
 
-        boolean hasFilters = (productId != null || stockMin != null || stockMax != null || normalizedSize != null);
-
+        boolean hasFilters = (productId != null || stockMin != null || stockMax != null || normalizedFilterSize != null);
+        Page<?> variantPage;
         if (hasFilters) {
-            model.addAttribute("items", toMapList(productVariantService.findByFilters(productId, stockMin, stockMax, normalizedSize)));
-            model.addAttribute("filterProductId", productId);
-            model.addAttribute("filterStockMin", stockMin);
-            model.addAttribute("filterStockMax", stockMax);
-            model.addAttribute("filterSize", normalizedSize);
+            var results = productVariantService.findByFilters(productId, stockMin, stockMax, normalizedFilterSize);
+            int start = page * size;
+            int end = Math.min(start + size, results.size());
+            var pageContent = results.subList(Math.min(start, results.size()), end);
+            variantPage = new PageImpl<>(pageContent, PageRequest.of(page, size), results.size());
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/product-variants/list", page - 1, size, paginationParams("productId", productId, "stockMin", stockMin, "stockMax", stockMax, "filterSize", normalizedFilterSize)) : null);
+            model.addAttribute("paginationNext", page + 1 < variantPage.getTotalPages() ? buildPaginationUrl("/manage/product-variants/list", page + 1, size, paginationParams("productId", productId, "stockMin", stockMin, "stockMax", stockMax, "filterSize", normalizedFilterSize)) : null);
         } else {
-            model.addAttribute("items", toMapList(productVariantService.findAll()));
+            variantPage = productVariantService.findAllPageable(PageRequest.of(page, size));
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/product-variants/list", page - 1, size, null) : null);
+            model.addAttribute("paginationNext", page + 1 < variantPage.getTotalPages() ? buildPaginationUrl("/manage/product-variants/list", page + 1, size, null) : null);
         }
+        model.addAttribute("items", toMapList(variantPage.getContent()));
+        model.addAttribute("currentPage", variantPage.getNumber());
+        model.addAttribute("totalPages", variantPage.getTotalPages());
+        model.addAttribute("pageSize", variantPage.getSize());
+
+        model.addAttribute("filterProductId", productId);
+        model.addAttribute("filterStockMin", stockMin);
+        model.addAttribute("filterStockMax", stockMax);
+        model.addAttribute("filterSize", normalizedFilterSize);
         
         model.addAttribute("allProducts", productService.findAll());
         return "management-list";

@@ -1,7 +1,11 @@
 package com.ecommerce.backend.controller.mvc;
 
+import com.ecommerce.backend.dto.request.ProductReviewRequestDTO;
 import com.ecommerce.backend.model.enums.ReviewStatus;
 import com.ecommerce.backend.service.interfaces.ProductReviewService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +30,11 @@ public class ProductReviewManagementViewController extends BaseManagementControl
 
     @GetMapping("/list")
     public String list(Model model,
-                       @RequestParam(required = false) Long editId,
-                       @RequestParam(required = false) Long filterProductId,
-                       @RequestParam(required = false) ReviewStatus filterStatus) {
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false) Long filterProductId,
+                        @RequestParam(required = false) ReviewStatus filterStatus,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "8") int size) {
 
         model.addAttribute("entityName", "Product Reviews");
         model.addAttribute("entityKey", "product-reviews");
@@ -38,40 +44,46 @@ public class ProductReviewManagementViewController extends BaseManagementControl
         model.addAttribute("filterStatus", filterStatus);
 
         boolean hasFilters = (filterProductId != null || filterStatus != null);
-
+        Page<?> pageResult;
         if (hasFilters) {
-            if (filterProductId != null && filterStatus != null) {
-                model.addAttribute("items", toMapList(productReviewService.findByProductIdAndStatus(filterProductId, filterStatus)));
-            } else if (filterProductId != null) {
-                model.addAttribute("items", toMapList(productReviewService.findByProductId(filterProductId)));
-            } else {
-                // filterStatus only – fall through to findAll and filter in-memory
-                model.addAttribute("items", toMapList(
-                        productReviewService.findAll().stream()
-                                .filter(r -> {
-                                    @SuppressWarnings("unchecked")
-                                    Map<String, Object> map = objectMapper.convertValue(r, Map.class);
-                                    return filterStatus.name().equals(String.valueOf(map.get("status")));
-                                })
-                                .toList()
-                ));
-            }
+            var results = (filterProductId != null && filterStatus != null)
+                    ? productReviewService.findByProductIdAndStatus(filterProductId, filterStatus)
+                    : (filterProductId != null)
+                    ? productReviewService.findByProductId(filterProductId)
+                    : productReviewService.findAll().stream()
+                        .filter(r -> {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> map = objectMapper.convertValue(r, Map.class);
+                            return filterStatus != null && filterStatus.name().equals(String.valueOf(map.get("status")));
+                        })
+                        .toList();
+            int start = page * size;
+            int end = Math.min(start + size, results.size());
+            var pageContent = results.subList(Math.min(start, results.size()), end);
+            pageResult = new PageImpl<>(pageContent, PageRequest.of(page, size), results.size());
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/product-reviews/list", page - 1, size, paginationParams("filterProductId", filterProductId, "filterStatus", filterStatus)) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/product-reviews/list", page + 1, size, paginationParams("filterProductId", filterProductId, "filterStatus", filterStatus)) : null);
         } else {
-            model.addAttribute("items", toMapList(productReviewService.findAll()));
+            pageResult = productReviewService.findAllPageable(PageRequest.of(page, size));
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/product-reviews/list", page - 1, size, null) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/product-reviews/list", page + 1, size, null) : null);
         }
+        model.addAttribute("items", toMapList(pageResult.getContent()));
+        model.addAttribute("currentPage", pageResult.getNumber());
+        model.addAttribute("totalPages", pageResult.getTotalPages());
+        model.addAttribute("pageSize", pageResult.getSize());
 
         return "management-list";
     }
 
     @PostMapping("/update")
     public String update(@RequestParam Long id,
-                         @RequestParam Map<String, String> formData,
-                         RedirectAttributes redirectAttributes) {
+                        @RequestParam Map<String, String> formData,
+                        RedirectAttributes redirectAttributes) {
         try {
             ReviewStatus newStatus = ReviewStatus.valueOf(requiredText(formData, "status").trim().toUpperCase());
-            // Only the status can be changed from the admin panel
-            com.ecommerce.backend.dto.request.ProductReviewRequestDTO dto =
-                    new com.ecommerce.backend.dto.request.ProductReviewRequestDTO(
+            ProductReviewRequestDTO dto =
+                    new ProductReviewRequestDTO(
                             requiredLong(formData, "userId"),
                             requiredLong(formData, "orderId"),
                             requiredLong(formData, "productId"),

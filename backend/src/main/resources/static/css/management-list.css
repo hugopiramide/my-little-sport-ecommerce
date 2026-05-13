@@ -1,10 +1,16 @@
 @import url('/css/management.css');
 
+header{
+  display: flex; 
+  justify-content: space-between;
+  align-items: center;
+}
+
 .management-layout {
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
@@ -257,4 +263,43 @@ table tbody tr.row-editing {
   .filter-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.pagination-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.pagination-controls {
+  padding: 10px;
+}
+
+.pagination-link,
+.pagination-disabled {
+  padding: 8px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--main);
+  background: var(--txt);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-link:hover {
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+}
+
+.pagination-disabled {
+  color: var(--main);
+  border-color: var(--line);
+  cursor: default;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--txt);
 }

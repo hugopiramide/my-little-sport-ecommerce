@@ -31,7 +31,7 @@ public class EmailVerificationService {
     @Value("${app.mail.from:no-reply@mylittlesport.local}")
     private String mailFrom;
 
-    @Value("${app.security.email-verification.expiration-minutes:15}")
+    @Value("${app.security.email-verification.expiration-minutes:120}")
     private long expirationMinutes;
 
     public EmailVerificationService(JavaMailSender mailSender, PasswordEncoder passwordEncoder, UserService userService) {

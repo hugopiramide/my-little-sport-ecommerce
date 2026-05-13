@@ -10,7 +10,7 @@
 </head>
 <body>
   <div class="management-layout">
-    <header class="header">
+    <header>
       <h1 class="title in-line-block" th:text="'Manage ' + ${entityName}">List</h1>
       <a href="/" class="btn alt">Back to dashboard</a>
     </header>
@@ -52,8 +52,8 @@
               <input type="number" id="stockMax" name="stockMax" th:value="${filterStockMax}" placeholder="Max" class="filter-input"/>
             </div>
             <div class="filter-input-wrapper">
-              <label for="size" class="filter-label">Size</label>
-              <input type="text" id="size" name="size" th:value="${filterSize}" placeholder="e.g., M, L, XL" class="filter-input"/>
+              <label for="filterSize" class="filter-label">Size</label>
+              <input type="text" id="filterSize" name="filterSize" th:value="${filterSize}" placeholder="e.g., M, L, XL" class="filter-input"/>
             </div>
             <div class="filter-actions">
               <button type="submit" class="btn btn-search">Apply Filters</button>
@@ -64,7 +64,7 @@
             </div>
           </div>
         </form>
-      </div>
+          </div>
 
       <div th:if="${entityKey == 'orders'}" class="search-container mb-4">
         <form th:action="@{/manage/orders/list}" method="get" class="search-form">
@@ -168,8 +168,11 @@
                         th:text="${item.get(key).id + '-' + item.get(key).name}">
                   </span>
 
-                  <span th:if="${key == 'productVariantId' and item.get(key) != null}" 
-                        th:text="${item.get(key).id + '-' + item.get(key).product.name + ' (' + item.get(key).size + ')'}">
+                  <span th:if="${key == 'productVariantId' and item.get(key) != null and item.get(key) instanceof T(java.util.Map)}" 
+                        th:text="${item.get(key)['id'] + '-' + item.get(key)['product']['name'] + ' (' + item.get(key)['size'] + ')'}">
+                  </span>
+                  <span th:if="${key == 'productVariantId' and item.get(key) != null and !(item.get(key) instanceof T(java.util.Map))}"
+                        th:text="${item.get(key)}">
                   </span>
 
                   <span th:if="${item.get(key) instanceof T(java.util.List)}" 
@@ -183,17 +186,17 @@
                 <td class="table-action-cell">
                   <div th:if="${!isReadOnly}" class="actions-row">
                     <a th:if="${entityKey == 'product-variants'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, size=${filterSize})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, page=${currentPage}, size=${pageSize}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, filterSize=${filterSize})}"
                        class="btn-action btn-edit-link" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
                     <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, search=${searchQuery})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, page=${currentPage}, size=${pageSize}, search=${searchQuery})}"
                        class="btn-action btn-edit-link" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
                     <a th:if="${entityKey == 'product-reviews'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, editId=${item.id}, page=${currentPage}, size=${pageSize}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
                        class="btn-action btn-edit-link" title="Edit">
                       <i class="bi bi-pencil"></i>
                     </a>
@@ -221,8 +224,10 @@
                             th:text="${item.get(key).id + '-' + item.get(key).name}"></span>
                       <input th:if="${key == 'product'}" type="hidden" name="productId" th:value="${item.get(key).id}" th:form="'form-' + ${item.id}"/>
 
-                      <span th:if="${key == 'productVariantId' and item.get(key) != null}" 
-                            th:text="${item.get(key).id + '-' + item.get(key).product.name + ' (' + item.get(key).size + ')'}"></span>
+                      <span th:if="${key == 'productVariantId' and item.get(key) != null and item.get(key) instanceof T(java.util.Map)}" 
+                            th:text="${item.get(key)['id'] + '-' + item.get(key)['product']['name'] + ' (' + item.get(key)['size'] + ')'}"></span>
+                      <span th:if="${key == 'productVariantId' and item.get(key) != null and !(item.get(key) instanceof T(java.util.Map))}" 
+                            th:text="${item.get(key)}"></span>
 
                       <span th:if="${key == 'size' and entityKey == 'product-variants'}" th:text="${item.get(key)}"></span>
                       <input th:if="${key == 'size' and entityKey == 'product-variants'}" type="hidden" name="size" th:value="${item.get(key)}" th:form="'form-' + ${item.id}"/>
@@ -273,17 +278,17 @@
                       <i class="bi bi-check-circle"></i>
                     </button>
                     <a th:if="${entityKey == 'product-variants'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, size=${filterSize})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, page=${currentPage}, size=${pageSize}, productId=${filterProductId}, stockMin=${filterStockMin}, stockMax=${filterStockMax}, filterSize=${filterSize})}"
                        class="btn-action btn-cancel" title="Cancel">
                       <i class="bi bi-x-lg"></i>
                     </a>
                     <a th:if="${entityKey != 'product-variants' and entityKey != 'product-reviews'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, search=${searchQuery})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, page=${currentPage}, size=${pageSize}, search=${searchQuery})}"
                        class="btn-action btn-cancel" title="Cancel">
                       <i class="bi bi-x-lg"></i>
                     </a>
                     <a th:if="${entityKey == 'product-reviews'}"
-                       th:href="@{/manage/{e}/list(e=${entityKey}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
+                       th:href="@{/manage/{e}/list(e=${entityKey}, page=${currentPage}, size=${pageSize}, filterProductId=${filterProductId}, filterStatus=${filterStatus})}"
                        class="btn-action btn-cancel" title="Cancel">
                       <i class="bi bi-x-lg"></i>
                     </a>
@@ -294,6 +299,39 @@
           </tbody>
         </table>
       </div>
+
+      <div th:if="${entityKey == 'products' and totalPages != null and totalPages > 1}" class="pagination-footer">
+        <nav class="pagination-controls" aria-label="Product search pagination">
+          <span th:if="${currentPage > 0}">
+            <a th:href="@{/manage/products/list(search=${searchQuery}, page=${currentPage - 1}, size=${pageSize})}" class="btn pagination-link">Previous</a>
+          </span>
+          <span th:if="${currentPage == 0}" class="btn pagination-disabled">Previous</span>
+
+          <span class="pagination-info">Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+
+          <span th:if="${currentPage + 1 < totalPages}">
+            <a th:href="@{/manage/products/list(search=${searchQuery}, page=${currentPage + 1}, size=${pageSize})}" class="btn pagination-link">Next</a>
+          </span>
+          <span th:if="${currentPage + 1 >= totalPages}" class="btn pagination-disabled">Next</span>
+        </nav>
+      </div>
+
+      <div th:if="${entityKey != 'products' and currentPage != null and totalPages != null and totalPages > 1}" class="pagination-footer">
+        <nav class="pagination-controls" aria-label="Pagination">
+          <span th:if="${paginationPrevious != null}">
+            <a th:href="${paginationPrevious}" class="btn pagination-link">Previous</a>
+          </span>
+          <span th:if="${paginationPrevious == null}" class="btn pagination-disabled">Previous</span>
+
+          <span class="pagination-info">Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+
+          <span th:if="${paginationNext != null}">
+            <a th:href="${paginationNext}" class="btn pagination-link">Next</a>
+          </span>
+          <span th:if="${paginationNext == null}" class="btn pagination-disabled">Next</span>
+        </nav>
+      </div>
+
       <div th:if="${#lists.isEmpty(items)}">
         <p th:if="${searchQuery == null}">No items to display.</p>
         <p th:if="${searchQuery != null}">No products found matching "<span th:text="${searchQuery}"></span>".</p>

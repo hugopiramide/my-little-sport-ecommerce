@@ -4,6 +4,9 @@ import com.ecommerce.backend.dto.ShippingAddressDTO;
 import com.ecommerce.backend.dto.request.OrderRequestDTO;
 import com.ecommerce.backend.model.enums.OrderStatus;
 import com.ecommerce.backend.service.interfaces.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,28 +31,41 @@ public class OrderManagementViewController extends BaseManagementController {
 
     @GetMapping("/list")
     public String list(Model model, 
-                       @RequestParam(required = false) Long editId,
-                       @RequestParam(required = false) String dateFrom,
-                       @RequestParam(required = false) String dateTo,
-                       @RequestParam(required = false) OrderStatus status) {
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false) String dateFrom,
+                        @RequestParam(required = false) String dateTo,
+                        @RequestParam(required = false) OrderStatus status,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "10") int size) {
         model.addAttribute("entityName", "Orders");
         model.addAttribute("entityKey", "orders");
         model.addAttribute("editId", editId);
         
-        // Normalize empty strings to null
         String normalizedDateFrom = (dateFrom != null && !dateFrom.isBlank()) ? dateFrom : null;
         String normalizedDateTo = (dateTo != null && !dateTo.isBlank()) ? dateTo : null;
         
         boolean hasFilters = (normalizedDateFrom != null || normalizedDateTo != null || status != null);
-        
+        Page<?> pageResult;
         if (hasFilters) {
-            model.addAttribute("items", toMapList(orderService.findByFilters(normalizedDateFrom, normalizedDateTo, status)));
+            var results = orderService.findByFilters(normalizedDateFrom, normalizedDateTo, status);
+            int start = page * size;
+            int end = Math.min(start + size, results.size());
+            var pageContent = results.subList(Math.min(start, results.size()), end);
+            pageResult = new PageImpl<>(pageContent, PageRequest.of(page, size), results.size());
             model.addAttribute("filterDateFrom", dateFrom);
             model.addAttribute("filterDateTo", dateTo);
             model.addAttribute("filterStatus", status);
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/orders/list", page - 1, size, paginationParams("dateFrom", dateFrom, "dateTo", dateTo, "status", status)) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/orders/list", page + 1, size, paginationParams("dateFrom", dateFrom, "dateTo", dateTo, "status", status)) : null);
         } else {
-            model.addAttribute("items", toMapList(orderService.findAll()));
+            pageResult = orderService.findAllPageable(PageRequest.of(page, size));
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/orders/list", page - 1, size, null) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/orders/list", page + 1, size, null) : null);
         }
+        model.addAttribute("items", toMapList(pageResult.getContent()));
+        model.addAttribute("currentPage", pageResult.getNumber());
+        model.addAttribute("totalPages", pageResult.getTotalPages());
+        model.addAttribute("pageSize", pageResult.getSize());
         
         model.addAttribute("allOrderStatuses", OrderStatus.values());
         return "management-list";

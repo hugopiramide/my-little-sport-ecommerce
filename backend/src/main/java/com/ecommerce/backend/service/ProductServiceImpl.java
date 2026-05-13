@@ -1,5 +1,6 @@
 package com.ecommerce.backend.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,12 +109,24 @@ public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResp
     }
 
     @Override
-    public List<ProductResponseDTO> searchByNameDescription(String query) {
-        return ((ProductRepository) repository)
-                .findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query)
-                .stream()
-                .map(productMapper::toProductResponseDTO)
-                .toList();
+    public Page<ProductResponseDTO> searchByNameDescription(String query, Pageable pageable) {
+
+        List<Product> allProducts = ((ProductRepository) repository)
+            .findByProductDataNameContainingIgnoreCaseOrProductDataDescriptionContainingIgnoreCase(query, query);
+
+        List<ProductResponseDTO> pagedList = Collections.emptyList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allProducts.size());
+
+        if (start <= allProducts.size()) {
+            pagedList = allProducts.subList(start, end)
+                    .stream()
+                    .map(productMapper::toProductResponseDTO)
+                    .toList();
+                }
+
+        return new PageImpl<>(pagedList, pageable, allProducts.size());
     }
 
     @Override
@@ -130,7 +143,7 @@ public class ProductServiceImpl extends BaseCrudServiceImpl<Product, ProductResp
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allProducts.size());
         
-        List<ProductResponseDTO> pagedList = java.util.Collections.emptyList();
+        List<ProductResponseDTO> pagedList = Collections.emptyList();
         if (start <= allProducts.size()) {
             pagedList = allProducts.subList(start, end)
                     .stream()

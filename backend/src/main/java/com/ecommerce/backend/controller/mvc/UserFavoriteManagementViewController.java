@@ -2,6 +2,8 @@ package com.ecommerce.backend.controller.mvc;
 
 import com.ecommerce.backend.dto.request.UserFavoriteRequestDTO;
 import com.ecommerce.backend.service.interfaces.UserFavoriteService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +27,20 @@ public class UserFavoriteManagementViewController extends BaseManagementControll
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId) {
+    public String list(Model model,
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "8") int size) {
+        Page<?> pageResult = userFavoriteService.findAllPageable(PageRequest.of(page, size));
         model.addAttribute("entityName", "User Favorites");
         model.addAttribute("entityKey", "user-favorites");
         model.addAttribute("editId", editId);
-        model.addAttribute("items", toMapList(userFavoriteService.findAll()));
+        model.addAttribute("items", toMapList(pageResult.getContent()));
+        model.addAttribute("currentPage", pageResult.getNumber());
+        model.addAttribute("totalPages", pageResult.getTotalPages());
+        model.addAttribute("pageSize", pageResult.getSize());
+        model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/user-favorites/list", page - 1, size, null) : null);
+        model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/user-favorites/list", page + 1, size, null) : null);
         return "management-list";
     }
 

@@ -1,7 +1,10 @@
 package com.ecommerce.backend.controller.mvc;
 
+import org.springframework.web.util.UriComponentsBuilder;
+
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseManagementController {
@@ -20,6 +23,32 @@ public abstract class BaseManagementController {
                     return map;
                 })
                 .toList();
+    }
+
+    protected String buildPaginationUrl(String path, int page, int size, Map<String, ?> params) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path)
+                .queryParam("page", page)
+                .queryParam("size", size);
+        if (params != null) {
+            params.forEach((key, value) -> {
+                if (value != null) {
+                    builder.queryParam(key, value);
+                }
+            });
+        }
+        return builder.toUriString();
+    }
+
+    protected Map<String, Object> paginationParams(Object... keyValues) {
+        Map<String, Object> params = new HashMap<>();
+        for (int i = 0; i + 1 < keyValues.length; i += 2) {
+            String key = (String) keyValues[i];
+            Object value = keyValues[i + 1];
+            if (value != null) {
+                params.put(key, value);
+            }
+        }
+        return params;
     }
 
     protected String requiredText(Map<String, String> formData, String key) {

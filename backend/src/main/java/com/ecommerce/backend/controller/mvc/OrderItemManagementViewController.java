@@ -2,6 +2,9 @@ package com.ecommerce.backend.controller.mvc;
 
 import com.ecommerce.backend.dto.request.OrderItemRequestDTO;
 import com.ecommerce.backend.service.interfaces.OrderItemService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,18 +31,34 @@ public class OrderItemManagementViewController extends BaseManagementController 
     public String list(Model model,
                        @RequestParam(required = false) Long editId,
                        @RequestParam(required = false) Long filterOrderId,
-                       @RequestParam(required = false) String filterProductName) {
+                       @RequestParam(required = false) String filterProductName,
+                       @RequestParam(required = false, defaultValue = "0") int page,
+                       @RequestParam(required = false, defaultValue = "10") int size) {
         model.addAttribute("entityName", "Order Items");
         model.addAttribute("entityKey", "order-items");
         model.addAttribute("editId", editId);
         model.addAttribute("filterOrderId", filterOrderId);
         model.addAttribute("filterProductName", filterProductName);
 
-        if (filterOrderId != null || (filterProductName != null && !filterProductName.trim().isEmpty())) {
-            model.addAttribute("items", toMapList(orderItemService.findByFilters(filterOrderId, filterProductName)));
+        Page<?> pageResult;
+        boolean hasFilters = filterOrderId != null || (filterProductName != null && !filterProductName.trim().isEmpty());
+        if (hasFilters) {
+            var results = orderItemService.findByFilters(filterOrderId, filterProductName);
+            int start = page * size;
+            int end = Math.min(start + size, results.size());
+            var pageContent = results.subList(Math.min(start, results.size()), end);
+            pageResult = new PageImpl<>(pageContent, PageRequest.of(page, size), results.size());
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/order-items/list", page - 1, size, paginationParams("filterOrderId", filterOrderId, "filterProductName", filterProductName)) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/order-items/list", page + 1, size, paginationParams("filterOrderId", filterOrderId, "filterProductName", filterProductName)) : null);
         } else {
-            model.addAttribute("items", toMapList(orderItemService.findAll()));
+            pageResult = orderItemService.findAllPageable(PageRequest.of(page, size));
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/order-items/list", page - 1, size, null) : null);
+            model.addAttribute("paginationNext", page + 1 < pageResult.getTotalPages() ? buildPaginationUrl("/manage/order-items/list", page + 1, size, null) : null);
         }
+        model.addAttribute("items", toMapList(pageResult.getContent()));
+        model.addAttribute("currentPage", pageResult.getNumber());
+        model.addAttribute("totalPages", pageResult.getTotalPages());
+        model.addAttribute("pageSize", pageResult.getSize());
         return "management-list";
     }
 

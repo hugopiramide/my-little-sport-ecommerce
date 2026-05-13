@@ -2,6 +2,8 @@ package com.ecommerce.backend.controller.mvc;
 
 import com.ecommerce.backend.dto.request.CategoryRequestDTO;
 import com.ecommerce.backend.service.interfaces.CategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +27,20 @@ public class CategoryManagementViewController extends BaseManagementController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId) {
+    public String list(Model model,
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "8") int size) {
+        Page<?> categoryPage = categoryService.findAllPageable(PageRequest.of(page, size));
         model.addAttribute("entityName", "Categories");
         model.addAttribute("entityKey", "categories");
         model.addAttribute("editId", editId);
-        model.addAttribute("items", toMapList(categoryService.findAll()));
+        model.addAttribute("items", toMapList(categoryPage.getContent()));
+        model.addAttribute("currentPage", categoryPage.getNumber());
+        model.addAttribute("totalPages", categoryPage.getTotalPages());
+        model.addAttribute("pageSize", categoryPage.getSize());
+        model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/categories/list", page - 1, size, null) : null);
+        model.addAttribute("paginationNext", page + 1 < categoryPage.getTotalPages() ? buildPaginationUrl("/manage/categories/list", page + 1, size, null) : null);
         return "management-list";
     }
 

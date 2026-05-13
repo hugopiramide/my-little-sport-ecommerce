@@ -46,6 +46,10 @@ body {
   gap: 14px;
 }
 
+header {
+  margin-bottom: 0;
+}
+
 .bar {
   position: fixed;
   inset: 0 0 auto;

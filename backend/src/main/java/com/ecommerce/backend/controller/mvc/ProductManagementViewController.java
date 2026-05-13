@@ -1,8 +1,11 @@
 package com.ecommerce.backend.controller.mvc;
 
 import com.ecommerce.backend.dto.request.ProductRequestDTO;
+import com.ecommerce.backend.dto.response.ProductResponseDTO;
 import com.ecommerce.backend.service.interfaces.CategoryService;
 import com.ecommerce.backend.service.interfaces.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,17 +31,33 @@ public class ProductManagementViewController extends BaseManagementController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(required = false) Long editId, @RequestParam(required = false) String search) {
+    public String list(Model model,
+                        @RequestParam(required = false) Long editId,
+                        @RequestParam(required = false) String search,
+                        @RequestParam(required = false, defaultValue = "0") int page,
+                        @RequestParam(required = false, defaultValue = "8") int size) {
 
         model.addAttribute("entityName", "Products");
         model.addAttribute("entityKey", "products");
         model.addAttribute("editId", editId);
-        
+
         if (search != null && !search.isBlank()) {
-            model.addAttribute("items", toMapList(productService.searchByNameDescription(search)));
+            Page<ProductResponseDTO> productPage = productService.searchByNameDescription(search, PageRequest.of(page, size));
+            model.addAttribute("items", toMapList(productPage.getContent()));
             model.addAttribute("searchQuery", search);
+            model.addAttribute("currentPage", productPage.getNumber());
+            model.addAttribute("totalPages", productPage.getTotalPages());
+            model.addAttribute("pageSize", productPage.getSize());
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/products/list", page - 1, size, paginationParams("search", search)) : null);
+            model.addAttribute("paginationNext", page + 1 < productPage.getTotalPages() ? buildPaginationUrl("/manage/products/list", page + 1, size, paginationParams("search", search)) : null);
         } else {
-            model.addAttribute("items", toMapList(productService.findAll()));
+            Page<ProductResponseDTO> productPage = productService.findAllPageable(PageRequest.of(page, size));
+            model.addAttribute("items", toMapList(productPage.getContent()));
+            model.addAttribute("currentPage", productPage.getNumber());
+            model.addAttribute("totalPages", productPage.getTotalPages());
+            model.addAttribute("pageSize", productPage.getSize());
+            model.addAttribute("paginationPrevious", page > 0 ? buildPaginationUrl("/manage/products/list", page - 1, size, null) : null);
+            model.addAttribute("paginationNext", page + 1 < productPage.getTotalPages() ? buildPaginationUrl("/manage/products/list", page + 1, size, null) : null);
         }
         
         model.addAttribute("allCategories", categoryService.findAll());

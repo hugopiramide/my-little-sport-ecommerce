@@ -39,7 +39,10 @@ public class ProductController extends BaseRestController<ProductResponseDTO, Pr
         return ResponseEntity.ok(pagedResourcesAssembler.toModel(page));
     }
     @GetMapping("/search-simple")
-    public ResponseEntity<List<ProductResponseDTO>> searchByNameDescription(@RequestParam String query) {
-        return ResponseEntity.ok(productService.searchByNameDescription(query));
+    public ResponseEntity<PagedModel<EntityModel<ProductResponseDTO>>> searchByNameDescription(
+            @RequestParam String query, 
+            @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<ProductResponseDTO> page = productService.searchByNameDescription(query, pageable);
+        return ResponseEntity.ok(pagedResourcesAssembler.toModel(page));
     }
 }
