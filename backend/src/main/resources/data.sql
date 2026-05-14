@@ -335,8 +335,31 @@ INSERT INTO `user_favorites` (`user_id`, `product_id`, `notify_when_in_stock`) V
 INSERT INTO `product_review` (`user_id`, `product_id`, `order_id`, `title`, `body`, `rating`, `status`, `created_at`) VALUES
   (2, 1, 1, 'Excelentes zapatillas', 'Muy cómodas para correr maratones. El agarre es increíble.', 5, 'APPROVED', NOW()),
   (3, 1, 4, 'Buenas pero caras', 'La amortiguación es genial, pero el precio es un poco elevado.', 4, 'APPROVED', NOW()),
+  (10, 1, 18, 'Perfectas', 'El tamaño es correcto y los materiales se ven duraderos.', 5, 'APPROVED', NOW()),
+  (16, 1, 25, 'Muy ligeras', 'Me sorprendió lo ligeras que son. Perfectas para velocidad.', 5, 'APPROVED', NOW()),
   (6, 15, 11, 'Imprescindibles para trail', 'Resistentes y totalmente impermeables. Las mejores que he tenido.', 5, 'APPROVED', NOW()),
-  (9, 5, 17, 'Normalitas', 'Esperaba más durabilidad para crossfit.', 3, 'PENDING',  NOW());
+  (14, 8, 24, 'Estilo y comodidad', 'Perfectas para el día a día. Las uso para ir al trabajo.', 4, 'APPROVED', NOW()),
+  (11, 10, 20, 'Se ensucian rápido', 'El diseño es bonito pero el material atrae mucho polvo.', 3, 'APPROVED', NOW()),
+  (8, 12, 15, 'Buen agarre', 'Se agarran a la pista que da gusto. Recomendadas para jugar en interior.', 4, 'APPROVED', NOW()),
+  (12, 16, 22, 'Suela dura', 'Para senderos mixtos va bien, pero suela algo rígida al principio.', 3, 'APPROVED', NOW()),
+  (9, 5, 17, 'Normalitas', 'Esperaba más durabilidad para crossfit.', 3, 'PENDING',  NOW()),
+  (2, 5, 2, 'Increíbles', 'Soportan el peso perfectamente, el agarre es de otro nivel.', 5, 'APPROVED', NOW()),
+  (2, 12, 3, 'Un poco decepcionado', 'Se sienten pesadas después del primer cuarto.', 2, 'APPROVED', NOW()),
+  (3, 11, 4, 'Me encantan', 'Estéticamente son geniales, rollo retro total.', 5, 'APPROVED', NOW()),
+  (3, 10, 4, 'Correctas', 'Para el día a día están bien, aunque la suela resbala un poco con lluvia.', 3, 'APPROVED', NOW()),
+  (4, 5, 6, 'Resistentes', 'Las uso a diario para el box de crossfit y aguantan como unas campeonas.', 5, 'APPROVED', NOW()),
+  (4, 3, 7, 'Vuelo con ellas', 'He mejorado mis tiempos gracias a la placa de carbono. Imprescindibles.', 5, 'APPROVED', NOW()),
+  (5, 4, 8, 'Fresquitas', 'La malla transpira muy bien. Ideales para verano.', 4, 'APPROVED', NOW()),
+  (6, 13, 10, 'Buena sujeción', 'Protegen muy bien los tobillos en los rebotes.', 4, 'APPROVED', NOW()),
+  (7, 9, 12, 'Clásicas', 'Nunca fallan, el cuero vegano se ve de buena calidad.', 4, 'APPROVED', NOW()),
+  (7, 6, 13, 'Demasiado rígidas', 'Me cuestan un poco en los movimientos laterales rápidos.', 2, 'APPROVED', NOW()),
+  (8, 3, 15, 'Las mejores', 'Sin duda valen cada céntimo. Súper reactivas.', 5, 'APPROVED', NOW()),
+  (9, 8, 17, 'Cómodas', 'Las llevo para andar por ciudad todo el día y el pie no se resiente.', 5, 'APPROVED', NOW()),
+  (10, 11, 18, 'Bonitas pero ajustadas', 'El diseño me flipa, pero apretan un poco al principio.', 3, 'APPROVED', NOW()),
+  (11, 9, 20, 'Las recomiendo', 'Son tal cual se ven en la foto. Talla perfecta.', 5, 'APPROVED', NOW()),
+  (12, 15, 22, 'Gore-Tex cumple', 'Me he metido en charcos y el pie seco. Un 10.', 5, 'APPROVED', NOW()),
+  (13, 5, 23, 'Bien para el precio', 'Cumplen su función sin destacar demasiado.', 3, 'REJECTED', NOW()),
+  (16, 13, 25, 'Sólidas', 'Muy buena estabilidad en la cancha.', 4, 'REJECTED', NOW());
 
 -- ============================================================
 -- CARRITOS (Carts para todos los usuarios)

@@ -63,6 +63,6 @@ public class Order {
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToOne(mappedBy = "order")
-    private ProductReview productReview;
+    @OneToMany(mappedBy = "order")
+    private List<ProductReview> productReviews;
 }
