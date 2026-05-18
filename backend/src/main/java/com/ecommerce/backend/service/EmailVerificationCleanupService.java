@@ -15,14 +15,14 @@ public class EmailVerificationCleanupService {
 
     private final UserService userService;
 
-    @Value("${app.security.email-verification.cleanup-interval-ms:60000}")
+    @Value("${app.security.email-verification.cleanup-interval-ms:3600000}")
     private long cleanupIntervalMs;
 
     public EmailVerificationCleanupService(UserService userService) {
         this.userService = userService;
     }
 
-    @Scheduled(fixedDelayString = "${app.security.email-verification.cleanup-interval-ms:60000}")
+    @Scheduled(fixedDelayString = "${app.security.email-verification.cleanup-interval-ms:3600000}")
     public void cleanupExpiredVerificationCodes() {
         Instant now = Instant.now();
         List<User> expiredUsers = userService.findExpiredNonVerifiedUsers(now);
