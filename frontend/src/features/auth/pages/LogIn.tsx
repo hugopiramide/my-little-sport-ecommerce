@@ -28,95 +28,111 @@ const LogIn = () => {
     setLoading(true)
 
     try {
-      const user = await authService.login(credentials)
-
-      localStorage.setItem('user', JSON.stringify(user))
-
-      navigate('/home', { state: { message: '¡Bienvenido de nuevo, ' + user.username + '!' } })
+      const authResponse = await authService.login(credentials)
+      
+      if (authResponse.requiresVerification) {
+        navigate(`/verify-email?username=${credentials.username}&email=${authResponse.user.email}`)
+      } else {
+        navigate('/home', { state: { message: 'Welcome back, ' + authResponse.user.username + '!' } })
+      }
     } catch (err) {
-      setError('Email o contraseña incorrectos. Inténtalo de nuevo. ' + (err instanceof Error ? err.message : 'Error desconocido'))
+      setError('Invalid username or password. Please try again. ' + (err instanceof Error ? err.message : 'Unknown error'))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="container min-h-screen bg-white flex flex-col items-center px-4 pt-10 font-sans text-[#111111] text-center">
-      <div className="mt-5">
-        <Link className="navbar-brand" to="/">
-          <img id="logo" src="/src/assets/img/logo.svg" alt="Logo" className="w-16" />
-        </Link>
-      </div>
+    <div className="container-fluid min-vh-100 bg-white d-flex flex-column align-items-center justify-content-center py-5">
+      <div className="row w-100 justify-content-center px-3">
+        <div className="col-12 col-md-8 col-lg-5 col-xl-4 text-center">
+          <Link to="/" className="d-inline-block mb-4 no-underline text-black hover:opacity-80 transition-opacity">
+            <h3 className="fw-black mb-0 tracking-tight-15 text-dark uppercase">
+              MYLITTLESPORT
+            </h3>
+          </Link>
 
-      <div className="w-full max-w-[460px]">
-        <h1 className="text-[28px] font-bold tracking-tighter leading-8 mb-3 text-center uppercase">
-          TU CUENTA PARA TODO HCD
-        </h1>
+          <h1 className="mb-5 lh-1 tracking-tighter">
+            YOUR <br />
+            ACCOUNT FOR <br />
+            EVERYTHING
+          </h1>
 
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          {error && (
+            <div className="alert alert-danger small py-3 mb-4 text-center" role="alert">
+              {error}
+            </div>
+          )}
 
-        <form className="flex flex-col gap-4 text-center" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="username"
-            value={credentials.username}
-            onChange={handleChange}
-            placeholder="Username"
-            className="w-full border border-gray-300 p-3 rounded-sm focus:border-black outline-none transition-all"
-            required
-          />
+          <form className="d-flex flex-column gap-3 mb-4" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <input
+                type="text"
+                name="username"
+                value={credentials.username}
+                onChange={handleChange}
+                placeholder="Username"
+                className="form-control-custom w-100 py-3"
+                required
+              />
+            </div>
 
-          <input
-            type="password"
-            name="password"
-            value={credentials.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full border border-gray-300 p-3 rounded-sm focus:border-black outline-none transition-all"
-            required
-          />
+            <div className="form-group">
+              <input
+                type="password"
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                placeholder="Password"
+                className="form-control-custom w-100 py-3"
+                required
+              />
+            </div>
 
-          <div className="flex justify-between items-center text-xs text-gray-500 my-2">
-            <label className="flex items-center gap-2 cursor-pointer mt-3">
-              <input type="checkbox" className="accent-black w-4 h-4 me-2" />
-              Stay logged In
-            </label>
+            <div className="text-center my-4">
+              <p className="text-muted small mb-0">
+                Problems with your Password? <Link to="#" className="text-dark fw-bold text-decoration-underline">Restore-Password</Link>
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`btn-dark-custom w-100 py-3 fw-black text-uppercase ${
+                loading ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Entering...
+                </>
+              ) : (
+                'LOG IN'
+              )}
+            </button>
+          </form>
+
+          <div className="text-center mb-4">
+            <p className="text-muted small">
+              Don't have account? 
+              <Link
+                to={'/register'}
+                className="ms-1 fw-bold text-dark text-decoration-underline"
+              >
+                Register
+              </Link>
+            </p>
           </div>
 
-          <p className="text-[12px] text-gray-500 text-center leading-5 px-4 mt-3">
-            Al iniciar sesión, aceptas la
-            <span className="underline text-black font-semibold"> HCD Política de Privacidad y Términos de Uso</span>
-          </p>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`bg-black text-white font-bold py-3 mt-4 rounded-sm hover:bg-zinc-800 transition-colors uppercase tracking-tight p-5 ${loading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-          >
-            {loading ? 'Entrando...' : 'Log In'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center text-sm">
-          <span className="text-gray-500 me-3">
-            ¿ Aún no eres miembro ?
-          </span>
-          <Link
-            to={'/register'}
-            className="ml-1 font-bold underline hover:text-gray-600 transition-colors"
-          >
-            Unirse
-          </Link>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link
-            to={'/'}
-            className="no-underline text-gray-400 hover:text-black text-xs transition-colors"
-          >
-            ← Volver al Inicio
-          </Link>
+          <div className="text-center">
+            <Link
+              to={'/'}
+              className="text-dark small fw-bold text-decoration-underline"
+            >
+              Back to home
+            </Link>
+          </div>
         </div>
       </div>
     </div>
