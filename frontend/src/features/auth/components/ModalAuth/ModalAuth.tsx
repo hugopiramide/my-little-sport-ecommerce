@@ -35,39 +35,36 @@ const ModalAuth: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             <div className="modal-body text-center">
-              <img 
-                src="/src/assets/img/logo.svg" 
-                alt="Logo" 
-                className="mb-4" 
-                style={{ width: '60px' }} 
-              />
+              <h3 className="fw-black mb-4 tracking-tight-15 text-dark uppercase">
+                MYLITTLESPORT
+              </h3>
               
               <h2 className="display-6 fw-black italic text-uppercase tracking-tighter mb-3">
-                Tu Ventaja como Miembro
+                Your Advantage as a Member
               </h2>
               
               <p className="text-secondary mb-5 px-md-3">
-                Únete a nuestra comunidad para obtener acceso exclusivo a lanzamientos, promociones y lo mejor del deporte.
+                Join our community to get exclusive access to releases, promotions, and the best of sport.
               </p>
 
               <div className="d-grid gap-3">
                 <Link 
                   to="/register" 
-                  className="btn btn-dark rounded-pill py-3 fw-bold text-uppercase"
+                  className="btn-custom bg-dark px-5 py-3 fw-bold text-uppercase text-white"
                 >
-                  Únete a nosotros
+                  JOIN US
                 </Link>
                 
                 <Link 
                   to="/login" 
-                  className="btn btn-outline-dark rounded-pill py-3 fw-bold text-uppercase"
+                  className="btn-custom bg-white border-black px-5 py-3 fw-bold text-uppercase"
                 >
-                  Iniciar Sesión
+                  LOG IN
                 </Link>
               </div>
 
               <p className="mt-4 small text-muted text-uppercase tracking-widest" style={{ fontSize: '10px' }}>
-                HCD Community Experience
+                MYLITTLESPORT Community Experience
               </p>
             </div>
           </div>
