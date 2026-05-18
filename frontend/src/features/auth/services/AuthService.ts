@@ -2,7 +2,6 @@ import {
   type LoginRequest,
   type RegisterRequest,
   type RegisterResponse,
-  type UserResponse,
   type AuthResponse,
   type VerifyEmailRequest,
   type ResendVerificationRequest
@@ -29,7 +28,7 @@ export const authService = {
     return await response.json() as RegisterResponse
   },
 
-  verifyEmail: async (payload: VerifyEmailRequest): Promise<UserResponse> => {
+  verifyEmail: async (payload: VerifyEmailRequest): Promise<AuthResponse> => {
     const response = await fetch(`${API_URL}/verify-email`, {
       method: 'POST',
       headers: {
@@ -40,20 +39,22 @@ export const authService = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.message || 'Código de verificación inválido o expirado')
+      throw new Error(errorData.message || 'Invalid or expired verification code')
     }
 
     const authResponse = await response.json() as AuthResponse
-    sessionStorage.setItem('token', authResponse.token)
-
-    const user: UserResponse = {
-      username: authResponse.user.username,
-      role: authResponse.user.role,
-      name: '', surnames: '', email: authResponse.user.email, profileImgUrl: '', birthday: new Date(), createAt: ''
+    
+    if (!authResponse.requiresVerification) {
+      sessionStorage.setItem('token', authResponse.token)
+      const { 
+        id, userId, role, ROL, 
+        emailVerified, requiresVerification, verificationExpiresInSeconds, 
+        ...userWithoutSensitiveData 
+      } = authResponse.user as any;
+      sessionStorage.setItem('user', JSON.stringify(userWithoutSensitiveData))
     }
-    sessionStorage.setItem('user', JSON.stringify(user))
 
-    return user
+    return authResponse
   },
 
   resendVerificationCode: async (payload: ResendVerificationRequest): Promise<RegisterResponse> => {
@@ -73,7 +74,7 @@ export const authService = {
     return await response.json() as RegisterResponse
   },
 
-  login: async (credentials: LoginRequest): Promise<UserResponse> => {
+  login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     const response = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: {
@@ -83,20 +84,23 @@ export const authService = {
     })
 
     if (!response.ok) {
-      throw new Error('Credenciales incorrectas o error en el servidor')
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.message || 'Invalid username or password')
     }
 
     const authResponse = await response.json() as AuthResponse
-    sessionStorage.setItem('token', authResponse.token)
     
-    const user: UserResponse = {
-      username: authResponse.user.username,
-      role: authResponse.user.role,
-      name: '', surnames: '', email: authResponse.user.email, profileImgUrl: '', birthday: new Date(), createAt: ''
+    if (!authResponse.requiresVerification) {
+      sessionStorage.setItem('token', authResponse.token)
+      const { 
+        id, userId, role, ROL, 
+        emailVerified, requiresVerification, verificationExpiresInSeconds, 
+        ...userWithoutSensitiveData 
+      } = authResponse.user as any;
+      sessionStorage.setItem('user', JSON.stringify(userWithoutSensitiveData))
     }
-    sessionStorage.setItem('user', JSON.stringify(user))
 
-    return user
+    return authResponse
   },
 
   logout: () => {
