@@ -75,7 +75,7 @@ public class User implements UserDetails{
     private Password password;
 
     @Convert(converter = ShippingAddressListConverter.class)
-    @Column(name = "shipping_addresses")
+    @Column(name = "shipping_addresses", columnDefinition = "TEXT")
     private List<ShippingAddress> shippingAddresses = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

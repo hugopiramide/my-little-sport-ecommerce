@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class ShippingAddress {
 
+    @Column(name = "address_name")
+    private String addressName;
+
     @Column(name = "recipient_name")
     private String recipientName;
 
