@@ -38,7 +38,7 @@ public class ShippingAddressRestController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<ShippingAddressResponseDTO>> getAddressesByUserId(@PathVariable Long userId) {
+    public ResponseEntity<?> getAddressesByUserId(@PathVariable Long userId) {
         try {
             User user = userService.getById(userId);
             List<ShippingAddress> list = user.getShippingAddresses();
@@ -57,11 +57,11 @@ public class ShippingAddressRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ShippingAddressResponseDTO> createAddress(@RequestBody ShippingAddressRequestDTO request) {
+    public ResponseEntity<?> createAddress(@RequestBody ShippingAddressRequestDTO request) {
         try {
             Long userId = request.userId();
             if (userId == null) {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body(Map.of("message", "User ID is required"));
             }
             User user = userService.getById(userId);
             List<ShippingAddress> list = user.getShippingAddresses();
@@ -85,7 +85,7 @@ public class ShippingAddressRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ShippingAddressResponseDTO> updateAddress(
+    public ResponseEntity<?> updateAddress(
             @PathVariable int id,
             @RequestBody ShippingAddressRequestDTO request) {
         try {
@@ -116,7 +116,7 @@ public class ShippingAddressRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAddress(
+    public ResponseEntity<?> deleteAddress(
             @PathVariable int id,
             @RequestParam Long userId) {
         try {
