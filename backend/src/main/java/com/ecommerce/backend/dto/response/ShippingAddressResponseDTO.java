@@ -1,6 +1,8 @@
-package com.ecommerce.backend.dto;
+package com.ecommerce.backend.dto.response;
 
-public record ShippingAddressDTO(
+public record ShippingAddressResponseDTO(
+    int id,
+    Long userId,
     String addressName,
     String recipientName,
     String companyName,

@@ -1,6 +1,7 @@
-package com.ecommerce.backend.dto;
+package com.ecommerce.backend.dto.request;
 
-public record ShippingAddressDTO(
+public record ShippingAddressRequestDTO(
+    Long userId,
     String addressName,
     String recipientName,
     String companyName,
