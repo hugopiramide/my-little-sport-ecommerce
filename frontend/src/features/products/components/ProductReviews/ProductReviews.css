@@ -1,0 +1,16 @@
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.starLabel {
+  width: 45px;
+}
+
+.progressContainer {
+  height: 10px;
+}
+
+.percentageLabel {
+  width: 45px;
+}

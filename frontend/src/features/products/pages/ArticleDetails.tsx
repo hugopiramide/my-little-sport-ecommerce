@@ -3,14 +3,20 @@ import { useState } from 'react'
 import { type ProductResponseDTO, type ProductVariantResponseDTO } from "../types"
 import { CartService } from '../../shopping-cart/services/ShoppingCartService'
 import { isUserLoggedIn, getCurrentUserId } from '../../auth/utils/authUtils'
-
+import { ReviewService } from "../services/ReviewService"
+import { ProductReviews } from "../components/ProductReviews/ProductReviews"
+import type { ProductReviewResponseDTO } from "../../shared/types"
 const loader: LoaderFunction = async ({ params }) => {
   const response = await fetch(`http://localhost:8080/api/products/${params.articleId}`)
   const product = await response.json()
   const variantsResponse = await fetch(`http://localhost:8080/api/product-variants/all`)
   const allVariants = await variantsResponse.json()
+  let reviews: ProductReviewResponseDTO[] = []
+  if(isUserLoggedIn()) {
+    reviews = await ReviewService.getReviewsForProduct(product.id)
+  }
   const variants = allVariants.filter((v: ProductVariantResponseDTO) => v.product.id === product.id)
-  return { ...product, variants }
+  return { ...product, variants, reviews }
 }
 
 const formatPrice = (amount: number) => {
@@ -24,12 +30,11 @@ const ArticleDetails = () => {
   const [isAdding, setIsAdding] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   
-  const product = useLoaderData() as ProductResponseDTO & { variants?: ProductVariantResponseDTO[] }
+  const product = useLoaderData() as ProductResponseDTO & { variants?: ProductVariantResponseDTO[], reviews?: ProductReviewResponseDTO[] }
 
   const selectedVariant = product.variants?.find(v => v.id === selectedVariantId)
-
-  const handleAddToCart = async (e: React.FormEvent) => {
-    e.preventDefault()
+  
+  const handleAddToCart = async (e: React.FormEvent) => { e.preventDefault()
     if (!selectedVariantId) {
       setVariantError('Please select a size before adding to cart')
       return
@@ -124,26 +129,25 @@ const ArticleDetails = () => {
                   {selectedVariantId && selectedVariant && (
                     <div className="mb-4 d-flex align-items-center">
                       <span className="fw-bold text-uppercase small me-3">Quantity</span>
-                      <div className="input-group input-qty">
-                        <button 
-                          className="btn btn-outline-secondary rounded-0 fw-bold" 
+                      <div className="d-flex align-items-center gap-4">
+                        <button
+                          className="btn btn-link text-dark p-0 text-decoration-none fs-4"
                           type="button"
                           onClick={() => setQuantity(q => Math.max(1, q - 1))}
                           disabled={quantity <= 1 || isAdding}
+                          style={{ opacity: quantity <= 1 ? 0.3 : 1 }}
                         >
-                          -
+                          −
                         </button>
-                        <input 
-                          type="text" 
-                          className="form-control text-center border-secondary fw-bold" 
-                          value={quantity} 
-                          readOnly 
-                        />
-                        <button 
-                          className="btn btn-outline-secondary rounded-0 fw-bold" 
+                        <span className="fw-bold fs-5" style={{ minWidth: '20px', textAlign: 'center' }}>
+                          {quantity}
+                        </span>
+                        <button
+                          className="btn btn-link text-dark p-0 text-decoration-none fs-4"
                           type="button"
                           onClick={() => setQuantity(q => Math.min(selectedVariant.stock, q + 1))}
                           disabled={quantity >= selectedVariant.stock || isAdding}
+                          style={{ opacity: (quantity >= selectedVariant.stock || isAdding) ? 0.3 : 1 }}
                         >
                           +
                         </button>
@@ -191,14 +195,28 @@ const ArticleDetails = () => {
                 {product.description}
               </p>
               <ul className="small mt-4 ps-3 text-info-custom">
-                <li className="mb-2">Color: Premium White</li>
-                <li className="mb-2">Style: {product.id}HCD-PRO</li>
+                <li className="mb-2">Category: {product.categoryName}</li>
+                <li className="mb-2">Style: {product.id}MY-LITTLE-SPORT</li>
               </ul>
             </div>
 
           </div>
         </div>
       </div>
+      
+      {isUserLoggedIn() ? (
+        <ProductReviews reviews={product.reviews || []} />
+      ) : (
+        <section id="product-reviews" className="py-5 mt-5 border-top">
+          <h2 className="fw-black mb-4 text-uppercase">Customer Reviews</h2>
+          <div className="text-center p-5 bg-secondary-custom rounded-5px">
+            <p className="text-muted mb-4 fw-bold">You need to log in to read customer reviews.</p>
+            <Link to="/login" className="btn-dark-custom px-5 py-2 text-decoration-none">
+              Login to View Reviews
+            </Link>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
