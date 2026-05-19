@@ -79,7 +79,7 @@ public class OrderManagementViewController extends BaseManagementController {
                     parseStatus(formData),
                     requiredDouble(formData, "total_price"),
                     new ShippingAddressDTO(
-                        null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
+                        null, null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
                     )
             );
             Object result = orderService.createFromDto(dto);
@@ -102,7 +102,7 @@ public class OrderManagementViewController extends BaseManagementController {
                     parseStatus(formData),
                     requiredDouble(formData, "total_price"),
                     new ShippingAddressDTO(
-                        null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
+                        null, null, null, requiredText(formData, "shipping_addres"), null, null, null, null, null, null, null
                     )
             );
             Object result = orderService.updateFromDto(id, dto);
