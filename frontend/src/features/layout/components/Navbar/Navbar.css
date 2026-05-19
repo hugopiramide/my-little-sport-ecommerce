@@ -41,3 +41,50 @@
 .border-bottom {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 15px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 240px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  z-index: 1100;
+  border-radius: 0;
+}
+
+.dropdown-item-custom {
+  display: block;
+  width: 100%;
+  padding: 18px 20px;
+  clear: both;
+  font-weight: 700;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.dropdown-item-custom:last-child {
+  border-bottom: 0;
+}
+
+.dropdown-item-custom:hover {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+.dropdown-item-custom.text-danger:hover {
+  background-color: #fff5f5;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
