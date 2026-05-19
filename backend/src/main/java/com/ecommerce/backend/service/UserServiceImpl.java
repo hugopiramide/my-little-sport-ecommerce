@@ -1,6 +1,9 @@
 package com.ecommerce.backend.service;
 
+import com.ecommerce.backend.dto.request.UpdateUserRequestDTO;
 import com.ecommerce.backend.model.User;
+import com.ecommerce.backend.model.vo.Birthday;
+import com.ecommerce.backend.model.vo.PersonalData;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.service.interfaces.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -65,5 +68,28 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteAll(List<User> users) {
         userRepository.deleteAll(users);
+    }
+
+    @Override
+    @Transactional
+    public User updateUserData(Long id, UpdateUserRequestDTO dto) {
+        User user = getById(id);
+        PersonalData pd = user.getPersonalData();
+        if (pd == null) {
+            pd = new PersonalData();
+        }
+        pd.setName(dto.name());
+        pd.setSurname(dto.surname());
+        pd.setEmail(dto.email());
+        pd.setProfileImgUrl(dto.profileImgUrl());
+        
+        if (dto.birthday() != null) {
+            pd.setBirthday(new Birthday(dto.birthday()));
+        } else {
+            pd.setBirthday(null);
+        }
+        
+        user.setPersonalData(pd);
+        return userRepository.save(user);
     }
 }
