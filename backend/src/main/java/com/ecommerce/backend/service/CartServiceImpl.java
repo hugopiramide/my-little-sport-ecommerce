@@ -83,7 +83,7 @@ public class CartServiceImpl extends BaseCrudServiceImpl<Cart, CartResponseDTO, 
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CartResponseDTO findByUserId(Long userId) {
         Cart cart = ((CartRepository) repository).findByUserId(userId)
             .orElseGet(() -> {

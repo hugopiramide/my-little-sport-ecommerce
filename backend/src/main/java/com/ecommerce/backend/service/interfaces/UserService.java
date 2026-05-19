@@ -1,5 +1,6 @@
 package com.ecommerce.backend.service.interfaces;
 
+import com.ecommerce.backend.dto.request.UpdateUserRequestDTO;
 import com.ecommerce.backend.model.User;
 import java.util.Optional;
 import java.util.List;
@@ -14,4 +15,5 @@ public interface UserService {
     User save(User user);
     void delete(User user);
     void deleteAll(List<User> users);
+    User updateUserData(Long id, UpdateUserRequestDTO dto);
 }
